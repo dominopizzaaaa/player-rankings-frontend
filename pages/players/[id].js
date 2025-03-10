@@ -7,9 +7,22 @@ const PlayerProfile = () => {
   const { id } = router.query; // Get player ID from URL
   const [player, setPlayer] = useState(null);
   const [matches, setMatches] = useState([]);
+  const [playersMap, setPlayersMap] = useState({});
 
   useEffect(() => {
     if (!id) return;
+
+    // Fetch all players to create a name-ID mapping
+    fetch("http://localhost:8000/players")
+      .then((response) => response.json())
+      .then((data) => {
+        const map = {};
+        data.forEach((p) => {
+          map[p.id] = `${p.name} (${p.id})`; // Store formatted name (id)
+        });
+        setPlayersMap(map);
+      })
+      .catch((error) => console.error("Error fetching players:", error));
 
     // Fetch player details
     fetch(`http://localhost:8000/players/${id}`)
@@ -35,7 +48,7 @@ const PlayerProfile = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-4">{player.name}'s Profile</h2>
+        <h2 className="text-2xl font-bold mb-4">{player.name} ({player.id})'s Profile</h2>
 
         {/* Player Info */}
         <div className="bg-white shadow-md rounded-lg p-4">
@@ -63,11 +76,14 @@ const PlayerProfile = () => {
             {matches.map((match) => {
               const opponentId =
                 match.player1_id == id ? match.player2_id : match.player1_id;
+
               return (
                 <tr key={match.id} className="border-b">
-                  <td className="py-2 px-4 text-center">Player {opponentId}</td>
                   <td className="py-2 px-4 text-center">
-                    {match.winner == id ? "You" : `Player ${match.winner}`}
+                    {playersMap[opponentId] || `Player ${opponentId} (${opponentId})`}
+                  </td>
+                  <td className="py-2 px-4 text-center font-bold">
+                    {playersMap[match.winner] || `Player ${match.winner} (${match.winner})`}
                   </td>
                   <td className="py-2 px-4 text-center">
                     {match.player1_score} - {match.player2_score}

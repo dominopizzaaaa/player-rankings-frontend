@@ -8,6 +8,7 @@ const Navbar = () => {
         <div className="space-x-4">
           <Link href="/" className="hover:text-gray-300">Home</Link>
           <Link href="/matches" className="hover:text-gray-300">Matches</Link>
+          <Link href="/manage-players" className="hover:text-gray-300">Add Player</Link>
         </div>
       </div>
     </nav>
