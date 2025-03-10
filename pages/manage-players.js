@@ -13,7 +13,7 @@ const ManagePlayers = () => {
   const [gender, setGender] = useState("");
 
   const fetchPlayers = () => {
-    fetch("http://localhost:8000/players")
+    fetch("https://player-rankings-backend.onrender.com/players")
       .then((response) => response.json())
       .then((data) => setPlayers(data))
       .catch((error) => console.error("Error fetching players:", error));
@@ -41,7 +41,7 @@ const ManagePlayers = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/players", {
+      const response = await fetch("https://player-rankings-backend.onrender.com/players", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPlayer),
@@ -104,7 +104,7 @@ const ManagePlayers = () => {
             <Form.Label>Blade</Form.Label>
             <Form.Control type="text" value={blade} onChange={(e) => setBlade(e.target.value)} />
           </Form.Group>
-          
+
           <Form.Group className="mb-3">
           <Form.Label>Age</Form.Label>
           <Form.Control
