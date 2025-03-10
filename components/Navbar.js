@@ -1,18 +1,28 @@
 import Link from "next/link";
+import { Navbar, Nav, Container } from "react-bootstrap";
 
-const Navbar = () => {
+const CustomNavbar = () => {
   return (
-    <nav className="bg-gray-800 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">Elo Rankings</h1>
-        <div className="space-x-4">
-          <Link href="/" className="hover:text-gray-300">Home</Link>
-          <Link href="/matches" className="hover:text-gray-300">Matches</Link>
-          <Link href="/manage-players" className="hover:text-gray-300">Add Player</Link>
-        </div>
-      </div>
-    </nav>
+    <Navbar bg="dark" variant="dark" expand="lg">
+      <Container>
+        <Navbar.Brand href="/">🏓 Elo Rankings</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ms-auto">
+            <Link href="/" passHref legacyBehavior>
+              <Nav.Link>Leaderboard</Nav.Link>
+            </Link>
+            <Link href="/matches" passHref legacyBehavior>
+              <Nav.Link>Matches</Nav.Link>
+            </Link>
+            <Link href="/manage-players" passHref legacyBehavior>
+              <Nav.Link>Add Player</Nav.Link>
+            </Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 
-export default Navbar;
+export default CustomNavbar;

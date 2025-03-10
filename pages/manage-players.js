@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import CustomNavbar from "../components/Navbar";
+import { Container, Form, Button, Table } from "react-bootstrap";
 
 const ManagePlayers = () => {
   const [players, setPlayers] = useState([]);
@@ -11,7 +12,6 @@ const ManagePlayers = () => {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
 
-  // Fetch players list
   const fetchPlayers = () => {
     fetch("http://localhost:8000/players")
       .then((response) => response.json())
@@ -23,7 +23,6 @@ const ManagePlayers = () => {
     fetchPlayers();
   }, []);
 
-  // Handle adding a new player
   const handleAddPlayer = async (e) => {
     e.preventDefault();
     if (!name) {
@@ -60,112 +59,79 @@ const ManagePlayers = () => {
       setBlade("");
       setAge("");
       setGender("");
-      fetchPlayers(); // Refresh player list
+      fetchPlayers();
     } catch (error) {
       console.error("Error adding player:", error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <div className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-4">Manage Players</h2>
-
-        {/* Add Player Form */}
-        <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-          <h3 className="text-xl font-bold mb-4">Add New Player</h3>
-          <form onSubmit={handleAddPlayer} className="space-y-4">
-            <input
+    <div>
+      <CustomNavbar />
+      <Container className="mt-4">
+        <h2 className="text-center mb-4">➕ Add New Player</h2>
+        <Form onSubmit={handleAddPlayer} className="bg-light p-4 rounded shadow">
+          <Form.Group className="mb-3">
+            <Form.Label>Player Name</Form.Label>
+            <Form.Control
               type="text"
-              placeholder="Player Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border rounded"
               required
             />
-            <select
-              value={handedness}
-              onChange={(e) => setHandedness(e.target.value)}
-              className="w-full p-2 border rounded"
-            >
-              <option value="">Select Handedness</option>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Hand</Form.Label>
+            <Form.Select value={handedness} onChange={(e) => setHandedness(e.target.value)}>
+              <option value="">Select Playing Hand</option>
               <option value="Right">Right</option>
               <option value="Left">Left</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Forehand Rubber"
-              value={forehandRubber}
-              onChange={(e) => setForehandRubber(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="text"
-              placeholder="Backhand Rubber"
-              value={backhandRubber}
-              onChange={(e) => setBackhandRubber(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="text"
-              placeholder="Blade"
-              value={blade}
-              onChange={(e) => setBlade(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="number"
-              placeholder="Age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-            <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              className="w-full p-2 border rounded"
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-            >
-              Add Player
-            </button>
-          </form>
-        </div>
+            </Form.Select>
+          </Form.Group>
 
-        {/* Player List */}
-        <h3 className="text-xl font-bold mb-4">Existing Players</h3>
-        <table className="w-full bg-white shadow-md rounded-lg">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="py-2 px-4">Name</th>
-              <th className="py-2 px-4">Elo Rating</th>
-              <th className="py-2 px-4">Handedness</th>
-              <th className="py-2 px-4">Blade</th>
-              <th className="py-2 px-4">Age</th>
-              <th className="py-2 px-4">Gender</th>
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player) => (
-              <tr key={player.id} className="border-b">
-                <td className="py-2 px-4">{player.name}</td>
-                <td className="py-2 px-4 text-center">{player.rating}</td>
-                <td className="py-2 px-4 text-center">{player.handedness || "Unknown"}</td>
-                <td className="py-2 px-4 text-center">{player.blade || "Unknown"}</td>
-                <td className="py-2 px-4 text-center">{player.age ? `${player.age} years` : "Unknown"}</td>
-                <td className="py-2 px-4 text-center">{player.gender || "Unknown"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          <Form.Group className="mb-3">
+            <Form.Label>Forehand Rubber</Form.Label>
+            <Form.Control type="text" value={forehandRubber} onChange={(e) => setForehandRubber(e.target.value)} />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Backhand Rubber</Form.Label>
+            <Form.Control type="text" value={backhandRubber} onChange={(e) => setBackhandRubber(e.target.value)} />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Blade</Form.Label>
+            <Form.Control type="text" value={blade} onChange={(e) => setBlade(e.target.value)} />
+          </Form.Group>
+          
+          <Form.Group className="mb-3">
+          <Form.Label>Age</Form.Label>
+          <Form.Control
+            type="number"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Gender</Form.Label>
+          <Form.Select value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </Form.Select>
+        </Form.Group>
+
+          <Button variant="primary" type="submit">
+            Add Player
+          </Button>
+
+        </Form>
+
+
+      </Container>
     </div>
   );
 };
