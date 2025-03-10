@@ -6,7 +6,7 @@ const Home = () => {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/players")
+    fetch("https://player-rankings-backend.onrender.com/players")
       .then((response) => response.json())
       .then((data) => {
         const sortedPlayers = data.sort((a, b) => b.rating - a.rating);

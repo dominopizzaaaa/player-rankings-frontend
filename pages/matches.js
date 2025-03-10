@@ -9,7 +9,7 @@ const Matches = () => {
 
   // Fetch players and store them in an object {id: name}
   useEffect(() => {
-    fetch("http://localhost:8000/players")
+    fetch("https://player-rankings-backend.onrender.com/players")
       .then((response) => response.json())
       .then((data) => {
         const playerMap = {};
@@ -23,7 +23,7 @@ const Matches = () => {
 
   // Function to fetch match history
   const fetchMatches = () => {
-    fetch("http://localhost:8000/matches")
+    fetch("https://player-rankings-backend.onrender.com/matches")
       .then((response) => response.json())
       .then((data) => setMatches(data))
       .catch((error) => console.error("Error fetching matches:", error));

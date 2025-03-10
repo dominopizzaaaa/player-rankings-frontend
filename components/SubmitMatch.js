@@ -9,7 +9,7 @@ const SubmitMatch = ({ refreshMatches }) => {
   const [winner, setWinner] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:8000/players")
+    fetch("https://player-rankings-backend.onrender.com/players")
       .then((response) => response.json())
       .then((data) => setPlayers(data))
       .catch((error) => console.error("Error fetching players:", error));
@@ -31,7 +31,7 @@ const SubmitMatch = ({ refreshMatches }) => {
     };
 
     try {
-      const response = await fetch("http://localhost:8000/matches", {
+      const response = await fetch("https://player-rankings-backend.onrender.com/matches", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(matchData),

@@ -13,7 +13,7 @@ const PlayerProfile = () => {
     if (!id) return;
 
     // Fetch all players to create a name-ID mapping
-    fetch("http://localhost:8000/players")
+    fetch("https://player-rankings-backend.onrender.com/players")
       .then((response) => response.json())
       .then((data) => {
         const map = {};
@@ -25,13 +25,13 @@ const PlayerProfile = () => {
       .catch((error) => console.error("Error fetching players:", error));
 
     // Fetch player details
-    fetch(`http://localhost:8000/players/${id}`)
+    fetch(`https://player-rankings-backend.onrender.com/players/${id}`)
       .then((response) => response.json())
       .then((data) => setPlayer(data))
       .catch((error) => console.error("Error fetching player:", error));
 
     // Fetch matches for this player
-    fetch(`http://localhost:8000/matches`)
+    fetch(`https://player-rankings-backend.onrender.com/matches`)
       .then((response) => response.json())
       .then((data) => {
         const playerMatches = data.filter(
