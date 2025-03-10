@@ -66,26 +66,6 @@ const ManagePlayers = () => {
     }
   };
 
-  // Handle deleting a player
-  const handleDeletePlayer = async (playerId) => {
-    if (!confirm("Are you sure you want to delete this player?")) return;
-
-    try {
-      const response = await fetch(`http://localhost:8000/players/${playerId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      alert("Player deleted successfully!");
-      fetchPlayers(); // Refresh player list
-    } catch (error) {
-      console.error("Error deleting player:", error);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -166,7 +146,10 @@ const ManagePlayers = () => {
             <tr className="bg-gray-200">
               <th className="py-2 px-4">Name</th>
               <th className="py-2 px-4">Elo Rating</th>
-              <th className="py-2 px-4">Actions</th>
+              <th className="py-2 px-4">Handedness</th>
+              <th className="py-2 px-4">Blade</th>
+              <th className="py-2 px-4">Age</th>
+              <th className="py-2 px-4">Gender</th>
             </tr>
           </thead>
           <tbody>
@@ -174,14 +157,10 @@ const ManagePlayers = () => {
               <tr key={player.id} className="border-b">
                 <td className="py-2 px-4">{player.name}</td>
                 <td className="py-2 px-4 text-center">{player.rating}</td>
-                <td className="py-2 px-4 text-center">
-                  <button
-                    onClick={() => handleDeletePlayer(player.id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </td>
+                <td className="py-2 px-4 text-center">{player.handedness || "Unknown"}</td>
+                <td className="py-2 px-4 text-center">{player.blade || "Unknown"}</td>
+                <td className="py-2 px-4 text-center">{player.age ? `${player.age} years` : "Unknown"}</td>
+                <td className="py-2 px-4 text-center">{player.gender || "Unknown"}</td>
               </tr>
             ))}
           </tbody>
