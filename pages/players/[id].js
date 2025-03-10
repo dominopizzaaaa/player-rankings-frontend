@@ -36,10 +36,20 @@ const PlayerProfile = () => {
       <Navbar />
       <div className="container mx-auto p-4">
         <h2 className="text-2xl font-bold mb-4">{player.name}'s Profile</h2>
-        <p><strong>Elo Rating:</strong> {player.rating}</p>
-        <p><strong>Matches Played:</strong> {player.matches_played}</p>
-        <p><strong>Matches Played:</strong> {player.forehand_rubber}</p>
 
+        {/* Player Info */}
+        <div className="bg-white shadow-md rounded-lg p-4">
+          <p><strong>Elo Rating:</strong> {player.rating}</p>
+          <p><strong>Matches Played:</strong> {player.matches_played}</p>
+          <p><strong>Handedness:</strong> {player.handedness || "Unknown"}</p>
+          <p><strong>Forehand Rubber:</strong> {player.forehand_rubber || "Unknown"}</p>
+          <p><strong>Backhand Rubber:</strong> {player.backhand_rubber || "Unknown"}</p>
+          <p><strong>Blade:</strong> {player.blade || "Unknown"}</p>
+          <p><strong>Age:</strong> {player.age ? `${player.age} years old` : "Unknown"}</p>
+          <p><strong>Gender:</strong> {player.gender || "Unknown"}</p>
+        </div>
+
+        {/* Match History */}
         <h3 className="text-xl font-bold mt-6">Match History</h3>
         <table className="w-full bg-white shadow-md rounded-lg mt-4">
           <thead>
