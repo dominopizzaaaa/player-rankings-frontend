@@ -13,11 +13,11 @@ const ManagePlayers = () => {
   const [gender, setGender] = useState("");
 
   const fetchPlayers = () => {
-    fetch("https://player-rankings-backend.onrender.com/players")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((response) => response.json())
       .then((data) => setPlayers(data))
       .catch((error) => console.error("Error fetching players:", error));
-  };
+  };  
 
   useEffect(() => {
     fetchPlayers();
@@ -41,11 +41,11 @@ const ManagePlayers = () => {
     };
 
     try {
-      const response = await fetch("https://player-rankings-backend.onrender.com/players", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPlayer),
-      });
+      });      
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);

@@ -6,7 +6,7 @@ const Home = () => {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    fetch("https://player-rankings-backend.onrender.com/players")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((response) => response.json())
       .then((data) => {
         const sortedPlayers = data.sort((a, b) => b.rating - a.rating);
@@ -14,7 +14,7 @@ const Home = () => {
       })
       .catch((error) => console.error("Error fetching players:", error));
   }, []);
-
+  
   return (
     <div>
       <CustomNavbar />

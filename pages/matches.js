@@ -9,7 +9,7 @@ const Matches = () => {
 
   // Fetch players and store them in an object {id: name}
   useEffect(() => {
-    fetch("https://player-rankings-backend.onrender.com/players")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((response) => response.json())
       .then((data) => {
         const playerMap = {};
@@ -20,14 +20,13 @@ const Matches = () => {
       })
       .catch((error) => console.error("Error fetching players:", error));
   }, []);
-
-  // Function to fetch match history
+  
   const fetchMatches = () => {
-    fetch("https://player-rankings-backend.onrender.com/matches")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`)
       .then((response) => response.json())
       .then((data) => setMatches(data))
       .catch((error) => console.error("Error fetching matches:", error));
-  };
+  };  
 
   useEffect(() => {
     fetchMatches();

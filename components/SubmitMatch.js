@@ -9,19 +9,19 @@ const SubmitMatch = ({ refreshMatches }) => {
   const [winner, setWinner] = useState("");
 
   useEffect(() => {
-    fetch("https://player-rankings-backend.onrender.com/players")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((response) => response.json())
       .then((data) => setPlayers(data))
       .catch((error) => console.error("Error fetching players:", error));
   }, []);
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!player1 || !player2 || !winner || player1 === player2) {
       alert("Please select valid players and a winner.");
       return;
     }
-
+  
     const matchData = {
       player1_id: parseInt(player1),
       player2_id: parseInt(player2),
@@ -29,18 +29,18 @@ const SubmitMatch = ({ refreshMatches }) => {
       player2_score: parseInt(player2Score),
       winner: parseInt(winner),
     };
-
+  
     try {
-      const response = await fetch("https://player-rankings-backend.onrender.com/matches", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(matchData),
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+  
       alert("Match submitted successfully!");
       setPlayer1("");
       setPlayer2("");
@@ -49,11 +49,11 @@ const SubmitMatch = ({ refreshMatches }) => {
       setWinner("");
       
       refreshMatches(); // ✅ Refresh match history after submission
-
+  
     } catch (error) {
       console.error("Error submitting match:", error);
     }
-  };
+  };  
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
