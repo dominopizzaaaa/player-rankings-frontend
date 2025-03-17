@@ -18,6 +18,12 @@ const CustomNavbar = () => {
             <Link href="/manage-players" passHref legacyBehavior>
               <Nav.Link>Add Player</Nav.Link>
             </Link>
+            <Link href="/delete-players" passHref legacyBehavior>
+              <Nav.Link>Delete Players</Nav.Link>
+            </Link>
+            <Link href="/delete-matches" passHref legacyBehavior>
+              <Nav.Link>Delete Matches</Nav.Link>
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
