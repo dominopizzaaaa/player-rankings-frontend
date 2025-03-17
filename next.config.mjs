@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true, // ✅ Ignores ESLint errors during builds
   },
   env: {
-    NEXT_PUBLIC_BACKEND_URL: "https://xbq-backend-72trh.ondigitalocean.app", // Replace with your actual backend URL
+    NEXT_PUBLIC_BACKEND_URL: "https://player-rankings-backend.onrender.com"
   },
 };
 
