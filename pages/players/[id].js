@@ -48,7 +48,7 @@ const PlayerProfile = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-4">{player.name} ({player.id})'s Profile</h2>
+        <h2 className="text-2xl font-bold mb-4">{player.name} ({player.name})'s Profile</h2>
 
         {/* Player Info */}
         <div className="bg-white shadow-md rounded-lg p-4">
