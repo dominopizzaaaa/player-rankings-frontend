@@ -70,10 +70,11 @@ const Matches = () => {
 
                 {/* Winner Name (ID) */}
                 <td className="py-2 px-4 text-center font-bold">
-                  {players[match.winner] 
-                    ? `${players[match.winner]} (${match.winner})` 
-                    : `Player ${match.winner} (${match.winner})`}
+                  {players[match.winner_id] 
+                    ? `${players[match.winner_id]} (${match.winner_id})` 
+                    : `Player ${match.winner_id} (${match.winner_id})`}
                 </td>
+
 
                 {/* Match Score */}
                 <td className="py-2 px-4 text-center">

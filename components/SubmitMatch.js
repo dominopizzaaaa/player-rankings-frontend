@@ -17,6 +17,7 @@ const SubmitMatch = ({ refreshMatches }) => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (!player1 || !player2 || !winner || player1 === player2) {
       alert("Please select valid players and a winner.");
       return;
@@ -27,8 +28,10 @@ const SubmitMatch = ({ refreshMatches }) => {
       player2_id: parseInt(player2),
       player1_score: parseInt(player1Score),
       player2_score: parseInt(player2Score),
-      winner: parseInt(winner),
+      winner_id: parseInt(winner),  // ✅ Changed "winner" to "winner_id"
     };
+  
+    console.log("Match data being sent:", JSON.stringify(matchData, null, 2)); // Debugging
   
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
@@ -47,14 +50,14 @@ const SubmitMatch = ({ refreshMatches }) => {
       setPlayer1Score("");
       setPlayer2Score("");
       setWinner("");
-      
+  
       refreshMatches(); // ✅ Refresh match history after submission
   
     } catch (error) {
       console.error("Error submitting match:", error);
     }
-  };  
-
+  };
+  
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
       <h2 className="text-xl font-bold mb-4">Submit Match Result</h2>
@@ -66,7 +69,7 @@ const SubmitMatch = ({ refreshMatches }) => {
             onChange={(e) => setPlayer1(e.target.value)}
             className="w-full p-2 border rounded"
           >
-            <option value="">Select Player 1</option>
+            <option value={parseInt(player1, 10)}>Player 1</option>
             {players.map((player) => (
               <option key={player.id} value={player.id}>
                 {player.name}
@@ -82,7 +85,7 @@ const SubmitMatch = ({ refreshMatches }) => {
             onChange={(e) => setPlayer2(e.target.value)}
             className="w-full p-2 border rounded"
           >
-            <option value="">Select Player 2</option>
+            <option value={parseInt(player2, 10)}>Player 2</option>
             {players.map((player) => (
               <option key={player.id} value={player.id}>
                 {player.name}
