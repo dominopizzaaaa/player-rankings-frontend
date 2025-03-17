@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchPlayers } from "../utils/api"; // ✅ Correct import
+import api from "../utils/api"; // Import API utility
 import CustomNavbar from "../components/Navbar"; // Import Navbar
 
 const DeletePlayers = () => {
