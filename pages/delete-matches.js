@@ -8,16 +8,16 @@ const DeleteMatches = () => {
 
   // Fetch matches from API
   useEffect(() => {
-    fetchMatches();
+    fetchMatchesData();
   }, []);
 
-  const fetchMatches = async () => {
+  const fetchMatchesData = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/matches");
-      setMatches(response.data);
+        const matchesData = await fetchMatches(); // ✅ Call the function
+        setMatches(matchesData);
     } catch (error) {
-      console.error("Error fetching matches:", error);
+        console.error("Error fetching matches:", error);
     }
     setLoading(false);
   };

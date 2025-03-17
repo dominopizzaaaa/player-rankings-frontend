@@ -8,16 +8,16 @@ const DeletePlayers = () => {
 
   // Fetch players from API
   useEffect(() => {
-    fetchPlayers();
+    fetchPlayersData();
   }, []);
 
-  const fetchPlayers = async () => {
+  const fetchPlayersData = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/players");
-      setPlayers(response.data);
+        const playersData = await fetchPlayers(); // ✅ Call the function
+        setPlayers(playersData);
     } catch (error) {
-      console.error("Error fetching players:", error);
+        console.error("Error fetching players:", error);
     }
     setLoading(false);
   };
