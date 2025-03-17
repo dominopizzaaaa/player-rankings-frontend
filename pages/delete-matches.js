@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../utils/api"; // Import API utility
+import { fetchMatches } from "../utils/api"; // ✅ Correct import
 import CustomNavbar from "../components/Navbar"; // Import Navbar
 
 const DeleteMatches = () => {
