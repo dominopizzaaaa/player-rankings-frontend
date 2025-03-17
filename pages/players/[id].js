@@ -11,36 +11,44 @@ const PlayerProfile = () => {
 
   useEffect(() => {
     if (!id) return;
-
+  
     // Fetch all players to create a name-ID mapping
     fetch("https://player-rankings-backend.onrender.com/players")
       .then((response) => response.json())
       .then((data) => {
+        console.log("Fetched players:", data); // Debugging
         const map = {};
         data.forEach((p) => {
           map[p.id] = `${p.name} (${p.id})`; // Store formatted name (id)
         });
         setPlayersMap(map);
+        console.log("Players map:", map); // Debugging
       })
       .catch((error) => console.error("Error fetching players:", error));
-
+  
     // Fetch player details
     fetch(`https://player-rankings-backend.onrender.com/players/${id}`)
       .then((response) => response.json())
-      .then((data) => setPlayer(data))
+      .then((data) => {
+        console.log("Fetched player details:", data); // Debugging
+        setPlayer(data);
+      })
       .catch((error) => console.error("Error fetching player:", error));
-
+  
     // Fetch matches for this player
     fetch(`https://player-rankings-backend.onrender.com/matches`)
       .then((response) => response.json())
       .then((data) => {
+        console.log("Fetched matches:", data); // Debugging
         const playerMatches = data.filter(
           (match) => match.player1_id == id || match.player2_id == id
         );
+        console.log("Filtered matches for player:", playerMatches); // Debugging
         setMatches(playerMatches);
       })
       .catch((error) => console.error("Error fetching matches:", error));
   }, [id]);
+  
 
   if (!player) return <div>Loading...</div>;
 
@@ -78,7 +86,10 @@ const PlayerProfile = () => {
                 parseInt(match.player1_id) === parseInt(id)
                   ? match.player2_id
                   : match.player1_id;
-            
+
+              console.log(`Match ID ${match.id}: Opponent ID =`, opponentId);
+              console.log(`Player names map:`, playersMap);
+
               return (
                 <tr key={match.id} className="border-b">
                   <td className="py-2 px-4 text-center">
@@ -94,6 +105,7 @@ const PlayerProfile = () => {
               );
             })}
           </tbody>
+
         </table>
       </div>
     </div>
