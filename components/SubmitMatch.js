@@ -69,7 +69,7 @@ const SubmitMatch = ({ refreshMatches }) => {
             onChange={(e) => setPlayer1(e.target.value)}
             className="w-full p-2 border rounded"
           >
-            <option value={parseInt(player1, 10)}>Player 1</option>
+            <option value="">Select Player 1</option>
             {players.map((player) => (
               <option key={player.id} value={player.id}>
                 {player.name}
@@ -85,7 +85,7 @@ const SubmitMatch = ({ refreshMatches }) => {
             onChange={(e) => setPlayer2(e.target.value)}
             className="w-full p-2 border rounded"
           >
-            <option value={parseInt(player2, 10)}>Player 2</option>
+            <option value="">Select Player 2</option>
             {players.map((player) => (
               <option key={player.id} value={player.id}>
                 {player.name}
