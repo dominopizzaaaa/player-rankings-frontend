@@ -19,3 +19,20 @@ export const fetchMatches = async () => {
     return [];
   }
 };
+
+export const deletePlayer = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/players/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete player: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting player:", error);
+    return null;
+  }
+};

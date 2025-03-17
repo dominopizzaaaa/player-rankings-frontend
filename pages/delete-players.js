@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { fetchPlayers } from "../utils/api"; // ✅ Correct import
-import api from "../utils/api"; // Import API utility
-import CustomNavbar from "../components/Navbar"; // Import Navbar
+import { fetchPlayers, deletePlayer } from "../utils/api"; // ✅ Import correctly
+import CustomNavbar from "../components/Navbar"; // ✅ Import Navbar
 
 const DeletePlayers = () => {
   const [players, setPlayers] = useState([]);
@@ -15,23 +14,21 @@ const DeletePlayers = () => {
   const fetchPlayersData = async () => {
     setLoading(true);
     try {
-        const playersData = await fetchPlayers(); // ✅ Call the function
-        setPlayers(playersData);
+      const playersData = await fetchPlayers(); // ✅ Call fetchPlayers from API
+      setPlayers(playersData);
     } catch (error) {
-        console.error("Error fetching players:", error);
+      console.error("Error fetching players:", error);
     }
     setLoading(false);
   };
 
-  // Delete player function
-  const deletePlayer = async (id) => {
+  // Delete player function (Uses API function from `api.js`)
+  const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this player?")) return;
 
-    try {
-      await api.delete(`/players/${id}`);
-      setPlayers(players.filter((player) => player.id !== id));
-    } catch (error) {
-      console.error("Error deleting player:", error);
+    const result = await deletePlayer(id); // ✅ Use imported function
+    if (result) {
+      setPlayers(players.filter((player) => player.id !== id)); // ✅ Update UI
     }
   };
 
@@ -47,7 +44,7 @@ const DeletePlayers = () => {
             {players.map((player) => (
               <li key={player.id} className="list-group-item d-flex justify-content-between align-items-center">
                 {player.name} (Rating: {player.rating})
-                <button className="btn btn-danger btn-sm" onClick={() => deletePlayer(player.id)}>Delete</button>
+                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(player.id)}>Delete</button>
               </li>
             ))}
           </ul>
