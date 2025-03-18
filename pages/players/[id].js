@@ -62,7 +62,7 @@ const PlayerProfile = () => {
         {/* Player Info */}
         <div className="bg-white shadow-md rounded-lg p-4">
           <p><strong>Elo Rating:</strong> {player.rating}</p>
-          <p><strong>Matches Played:</strong> {player.matches_played}</p>
+          <p><strong>Matches Played:</strong> {player.matches}</p>
           <p><strong>Handedness:</strong> {player.handedness || "Unknown"}</p>
           <p><strong>Forehand Rubber:</strong> {player.forehand_rubber || "Unknown"}</p>
           <p><strong>Backhand Rubber:</strong> {player.backhand_rubber || "Unknown"}</p>
