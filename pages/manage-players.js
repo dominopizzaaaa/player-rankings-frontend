@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import CustomNavbar from "../components/Navbar";
 import { Container, Form, Button, Table } from "react-bootstrap";
+import { isAdmin } from "../utils/auth"; // ✅ Import auth check
+import { useRouter } from "next/router";
 
 const ManagePlayers = () => {
   const [players, setPlayers] = useState([]);
@@ -11,6 +13,13 @@ const ManagePlayers = () => {
   const [blade, setBlade] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      router.push("/"); // ✅ Redirect non-admin users to leaderboard
+    }
+  }, []);
 
   const fetchPlayers = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
@@ -25,45 +34,65 @@ const ManagePlayers = () => {
 
   const handleAddPlayer = async (e) => {
     e.preventDefault();
+
     if (!name) {
-      alert("Player name is required!");
-      return;
+        alert("Player name is required!");
+        return;
+    }
+
+    // ✅ Retrieve the authentication token from localStorage
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("You must be logged in as an admin to add a player.");
+        return;
     }
 
     const newPlayer = {
-      name,
-      handedness,
-      forehand_rubber: forehandRubber,
-      backhand_rubber: backhandRubber,
-      blade,
-      age: age ? parseInt(age) : null,
-      gender,
+        name,
+        handedness,
+        forehand_rubber: forehandRubber,
+        backhand_rubber: backhandRubber,
+        blade,
+        age: age ? parseInt(age) : null,
+        gender,
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPlayer),
-      });      
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`  // ✅ Send token in headers
+            },
+            body: JSON.stringify(newPlayer),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+        if (!response.ok) {
+            if (response.status === 401) {
+                alert("Unauthorized! Please log in.");
+                window.location.href = "/login";  // ✅ Redirect to login page
+                return;
+            }
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-      alert("Player added successfully!");
-      setName("");
-      setHandedness("");
-      setForehandRubber("");
-      setBackhandRubber("");
-      setBlade("");
-      setAge("");
-      setGender("");
-      fetchPlayers();
+        alert("Player added successfully!");
+
+        // ✅ Reset input fields
+        setName("");
+        setHandedness("");
+        setForehandRubber("");
+        setBackhandRubber("");
+        setBlade("");
+        setAge("");
+        setGender("");
+
+        fetchPlayers();  // ✅ Refresh player list after adding
     } catch (error) {
-      console.error("Error adding player:", error);
+        console.error("Error adding player:", error);
+        alert("Failed to add player. Please try again.");
     }
-  };
+};
 
   return (
     <div>

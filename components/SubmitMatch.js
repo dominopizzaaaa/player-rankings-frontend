@@ -14,50 +14,63 @@ const SubmitMatch = ({ refreshMatches }) => {
       .then((data) => setPlayers(data))
       .catch((error) => console.error("Error fetching players:", error));
   }, []);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!player1 || !player2 || !winner || player1 === player2) {
-      alert("Please select valid players and a winner.");
+      alert("Please select valid players and ensure Player 1 and Player 2 are different.");
       return;
     }
-  
+
     const matchData = {
       player1_id: parseInt(player1),
       player2_id: parseInt(player2),
       player1_score: parseInt(player1Score),
       player2_score: parseInt(player2Score),
-      winner_id: parseInt(winner),  // ✅ Changed "winner" to "winner_id"
+      winner_id: parseInt(winner),
     };
-  
+
     console.log("Match data being sent:", JSON.stringify(matchData, null, 2)); // Debugging
-  
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to submit a match.");
+      return;
+    }
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Added token authentication
+        },
         body: JSON.stringify(matchData),
       });
-  
+
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        if (response.status === 401) {
+          alert("Unauthorized! Please log in.");
+        } else {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return;
       }
-  
+
       alert("Match submitted successfully!");
       setPlayer1("");
       setPlayer2("");
       setPlayer1Score("");
       setPlayer2Score("");
       setWinner("");
-  
+
       refreshMatches(); // ✅ Refresh match history after submission
-  
     } catch (error) {
       console.error("Error submitting match:", error);
     }
   };
-  
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
       <h2 className="text-xl font-bold mb-4">Submit Match Result</h2>
@@ -84,13 +97,16 @@ const SubmitMatch = ({ refreshMatches }) => {
             value={player2}
             onChange={(e) => setPlayer2(e.target.value)}
             className="w-full p-2 border rounded"
+            disabled={!player1} // ✅ Prevent selecting before Player 1 is chosen
           >
             <option value="">Select Player 2</option>
-            {players.map((player) => (
-              <option key={player.id} value={player.id}>
-                {player.name}
-              </option>
-            ))}
+            {players
+              .filter((player) => player.id !== parseInt(player1)) // ✅ Prevent duplicate selection
+              .map((player) => (
+                <option key={player.id} value={player.id}>
+                  {player.name}
+                </option>
+              ))}
           </select>
         </div>
 
@@ -123,10 +139,11 @@ const SubmitMatch = ({ refreshMatches }) => {
             value={winner}
             onChange={(e) => setWinner(e.target.value)}
             className="w-full p-2 border rounded"
+            disabled={!player1 || !player2} // ✅ Prevent selection until players are chosen
           >
             <option value="">Select Winner</option>
-            <option value={player1}>Player 1</option>
-            <option value={player2}>Player 2</option>
+            {player1 && <option value={player1}>{players.find((p) => p.id == player1)?.name}</option>}
+            {player2 && <option value={player2}>{players.find((p) => p.id == player2)?.name}</option>}
           </select>
         </div>
 

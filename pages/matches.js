@@ -2,10 +2,19 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import SubmitMatch from "../components/SubmitMatch";
 import Link from "next/link";
+import { isAdmin } from "../utils/auth"; // ✅ Import auth check
+import { useRouter } from "next/router";
 
 const Matches = () => {
   const [matches, setMatches] = useState([]);
   const [players, setPlayers] = useState({}); // Store player names
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      router.push("/"); // ✅ Redirect non-admin users to leaderboard
+    }
+  }, []);
 
   // Fetch players and store them in an object {id: name}
   useEffect(() => {

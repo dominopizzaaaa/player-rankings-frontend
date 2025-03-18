@@ -1,10 +1,19 @@
 import { useState, useEffect } from "react";
 import { fetchMatches, deleteMatch } from "../utils/api";  // ✅ Import deleteMatch
 import CustomNavbar from "../components/Navbar"; // Import Navbar
+import { isAdmin } from "../utils/auth"; // ✅ Import auth check
+import { useRouter } from "next/router";
 
 const DeleteMatches = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      router.push("/"); // ✅ Redirect non-admin users to leaderboard
+    }
+  }, []);
 
   useEffect(() => {
     fetchMatchesData();

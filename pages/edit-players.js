@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 import { fetchPlayers, updatePlayer } from "../utils/api";
 import CustomNavbar from "../components/Navbar";
+import { isAdmin } from "../utils/auth"; // ✅ Import auth check
+import { useRouter } from "next/router";
 
 const EditPlayers = () => {
   const [players, setPlayers] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [editData, setEditData] = useState({});
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      router.push("/"); // ✅ Redirect non-admin users to leaderboard
+    }
+  }, []);
 
   useEffect(() => {
     fetchPlayers().then(setPlayers);
