@@ -24,6 +24,12 @@ const CustomNavbar = () => {
             <Link href="/delete-matches" passHref legacyBehavior>
               <Nav.Link>Delete Matches</Nav.Link>
             </Link>
+            <Link href="/edit-players" passHref legacyBehavior>
+              <Nav.Link>Edit Players</Nav.Link>
+            </Link>
+            <Link href="/edit-matches" passHref legacyBehavior>
+              <Nav.Link>Edit Matches</Nav.Link>
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

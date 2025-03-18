@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
-import api from "../utils/api"; // Import API utility
-import { fetchMatches } from "../utils/api"; // ✅ Correct import
+import { fetchMatches, deleteMatch } from "../utils/api";  // ✅ Import deleteMatch
 import CustomNavbar from "../components/Navbar"; // Import Navbar
 
 const DeleteMatches = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch matches from API
   useEffect(() => {
     fetchMatchesData();
   }, []);
@@ -15,7 +13,7 @@ const DeleteMatches = () => {
   const fetchMatchesData = async () => {
     setLoading(true);
     try {
-        const matchesData = await fetchMatches(); // ✅ Call the function
+        const matchesData = await fetchMatches();
         setMatches(matchesData);
     } catch (error) {
         console.error("Error fetching matches:", error);
@@ -23,12 +21,12 @@ const DeleteMatches = () => {
     setLoading(false);
   };
 
-  // Delete match function
-  const deleteMatch = async (id) => {
+  // ✅ Use imported deleteMatch function
+  const handleDeleteMatch = async (id) => {
     if (!confirm("Are you sure you want to delete this match?")) return;
 
     try {
-      await api.delete(`/matches/${id}`);
+      await deleteMatch(id);  // ✅ Call the function from api.js
       setMatches(matches.filter((match) => match.id !== id));
     } catch (error) {
       console.error("Error deleting match:", error);
@@ -44,12 +42,22 @@ const DeleteMatches = () => {
           <p>Loading...</p>
         ) : (
           <ul className="list-group">
-            {matches.map((match) => (
-              <li key={match.id} className="list-group-item d-flex justify-content-between align-items-center">
-                {match.player1} vs {match.player2} (Winner: {match.winner})
-                <button className="btn btn-danger btn-sm" onClick={() => deleteMatch(match.id)}>Delete</button>
-              </li>
-            ))}
+            {
+              matches.map((match) => {
+                // Determine winner's name based on winner_id
+                const winnerName =
+                  match.winner_id === match.player1_id ? match.player1 : 
+                  match.winner_id === match.player2_id ? match.player2 : 
+                  "N/A"; // If winner_id is invalid
+
+                return (
+                  <li key={match.id} className="list-group-item d-flex justify-content-between align-items-center">
+                    {match.player1} vs {match.player2} (Winner: {winnerName})
+                    <button className="btn btn-danger btn-sm" onClick={() => deleteMatch(match.id)}>Delete</button>
+                  </li>
+                );
+              })
+            }
           </ul>
         )}
       </div>

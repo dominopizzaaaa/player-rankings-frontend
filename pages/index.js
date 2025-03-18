@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import CustomNavbar from "../components/Navbar";
 import { Table, Container } from "react-bootstrap";
 
@@ -34,7 +35,11 @@ const Home = () => {
               {players.map((player, index) => (
                 <tr key={player.id}>
                   <td className="fw-bold">{index + 1}</td>
-                  <td>{player.name}</td>
+                  <td>
+                    <Link href={`/players/${player.id}`} passHref legacyBehavior>
+                      <a className="text-decoration-none fw-bold">{player.name}</a>
+                    </Link>
+                  </td>
                   <td>{player.id}</td>
                   <td>{player.rating}</td>
                 </tr>
@@ -43,7 +48,6 @@ const Home = () => {
           </Table>
         </div>
       </Container>
-
     </div>
   );
 };
