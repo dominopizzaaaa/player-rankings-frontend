@@ -13,7 +13,7 @@ const PlayerProfile = () => {
     if (!id) return;
   
     // Fetch all players to create a name-ID mapping
-    fetch("https://player-rankings-backend.onrender.com/players")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched players:", data); // Debugging
@@ -27,7 +27,7 @@ const PlayerProfile = () => {
       .catch((error) => console.error("Error fetching players:", error));
   
     // Fetch player details
-    fetch(`https://player-rankings-backend.onrender.com/players/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players/${id}`)
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched player details:", data); // Debugging
@@ -35,9 +35,9 @@ const PlayerProfile = () => {
       })
       .catch((error) => console.error("Error fetching player:", error));
   
-      
+
     // Fetch matches for this player
-    fetch(`https://player-rankings-backend.onrender.com/matches`)
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`)
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched matches:", data); // Debugging
