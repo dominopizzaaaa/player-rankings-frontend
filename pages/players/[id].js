@@ -35,6 +35,7 @@ const PlayerProfile = () => {
       })
       .catch((error) => console.error("Error fetching player:", error));
   
+      
     // Fetch matches for this player
     fetch(`https://player-rankings-backend.onrender.com/matches`)
       .then((response) => response.json())
