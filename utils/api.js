@@ -78,12 +78,17 @@ export const deleteMatch = async (id) => {
 
     if (!response.ok) throw new Error(`Failed to delete match: ${response.statusText}`);
 
+    alert("Match deleted successfully!"); // ✅ Success message
+    window.location.reload(); // ✅ Refresh the page after deletion
+
     return await response.json();
   } catch (error) {
     console.error("Error deleting match:", error);
+    alert("Failed to delete match. Please try again."); // ✅ Error message
     return null;
   }
 };
+
 
 // ✅ Update a player (Admin only)
 export const updatePlayer = async (id, playerData) => {
