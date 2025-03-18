@@ -1,6 +1,3 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-
 export const isAdmin = () => {
   const token = localStorage.getItem("token"); // Fetch stored token
   if (!token) return false;
