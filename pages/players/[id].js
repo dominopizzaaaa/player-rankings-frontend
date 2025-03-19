@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
-import { isAdmin } from "../../utils/auth"; // ✅ Import auth check
 
 const PlayerProfile = () => {
   const router = useRouter();
@@ -9,12 +8,6 @@ const PlayerProfile = () => {
   const [player, setPlayer] = useState(null);
   const [matches, setMatches] = useState([]);
   const [playersMap, setPlayersMap] = useState({});
-
-  useEffect(() => {
-    if (!isAdmin()) {
-      router.push("/"); // ✅ Redirect non-admin users to leaderboard
-    }
-  }, []);
 
   useEffect(() => {
     if (!id) return;

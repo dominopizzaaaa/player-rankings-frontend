@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import CustomNavbar from "../components/Navbar";
 import { Table, Container } from "react-bootstrap";
+import { useRouter } from "next/router"; // ✅ Add router
+
+const router = useRouter
 
 const Home = () => {
   const [players, setPlayers] = useState([]);
@@ -37,7 +40,10 @@ const Home = () => {
                   <td className="fw-bold">{index + 1}</td>
                   <td>
                     <Link href={`/players/${player.id}`} passHref legacyBehavior>
-                      <a className="text-decoration-none fw-bold">{player.name}</a>
+                      <a 
+                        className="text-decoration-none fw-bold"
+                        onClick={() => console.log("Navigating to:", `/players/${player.id}`)} // ✅ Debug log
+                      />
                     </Link>
                   </td>
                   <td>{player.id}</td>
