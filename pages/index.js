@@ -39,12 +39,14 @@ const Home = () => {
                 <tr key={player.id}>
                   <td className="fw-bold">{index + 1}</td>
                   <td>
-                    <Link href={`/players/${player.id}`} passHref legacyBehavior>
-                      <a 
-                        className="text-decoration-none fw-bold"
-                        onClick={() => console.log("Navigating to:", `/players/${player.id}`)} // ✅ Debug log
-                      />
-                    </Link>
+                  <Link href={`/players/${player.id}`} passHref legacyBehavior>
+                    <a
+                      className="text-decoration-none fw-bold"
+                      onClick={() => console.log("Navigating to:", `/players/${player.id}`)} // ✅ Debug log
+                    >
+                      {player.name}
+                    </a>
+                  </Link>
                   </td>
                   <td>{player.id}</td>
                   <td>{player.rating}</td>
