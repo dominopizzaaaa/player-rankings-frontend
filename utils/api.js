@@ -127,6 +127,30 @@ export const updateMatch = async (id, matchData) => {
   }
 };
 
+export async function getTournaments() {
+  const res = await fetch(`${API_BASE}/tournaments`);
+  return res.json();
+}
+
+export async function createTournament(data) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/tournaments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail || "Error creating tournament");
+  }
+
+  return res.json();
+}
+
 // ✅ Login user and store token
 export const loginUser = async (credentials) => {
   try {
