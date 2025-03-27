@@ -13,8 +13,12 @@ const Home = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((response) => response.json())
       .then((data) => {
-        const sortedPlayers = data.sort((a, b) => b.rating - a.rating);
-        setPlayers(sortedPlayers);
+        if (Array.isArray(data)) {
+          const sortedPlayers = data.sort((a, b) => b.rating - a.rating);
+          setPlayers(sortedPlayers);
+        } else {
+          console.error("Expected array but got:", data);
+        }
       })
       .catch((error) => console.error("Error fetching players:", error));
   }, []);

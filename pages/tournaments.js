@@ -1,26 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { getTournaments } from '../../utils/api';
-import { isAdmin } from '../../utils/auth';
-import TournamentList from '../../components/TournamentList';
-import CreateTournamentForm from '../../components/CreateTournamentForm';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import CustomNavbar from "../components/Navbar";
+import CreateTournamentForm from "../components/CreateTournamentForm";
+import TournamentList from "../components/TournamentList";
+import { isAdmin } from "../utils/auth";
 
 export default function TournamentsPage() {
   const [tournaments, setTournaments] = useState([]);
-
-  const fetchData = async () => {
-    const data = await getTournaments();
-    setTournaments(data);
-  };
+  const [admin, setAdmin] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    fetchData();
+    if (!isAdmin()) {
+      router.push("/");  // Redirect to home if not admin
+    } else {
+      setAdmin(true);
+    }
   }, []);
 
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`)
+      .then((res) => res.json())
+      .then((data) => setTournaments(data))
+      .catch((err) => console.error("Failed to load tournaments", err));
+  }, []);
+
+  const refreshTournaments = () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`)
+      .then((res) => res.json())
+      .then((data) => setTournaments(data));
+  };
+
   return (
-    <div className="p-8 space-y-6">
-      <h1 className="text-2xl font-bold">Tournaments</h1>
-      {isAdmin() && <CreateTournamentForm onSuccess={fetchData} />}
-      <TournamentList tournaments={tournaments} />
+    <div className="min-h-screen bg-gray-100">
+      <CustomNavbar />
+      <div className="container mx-auto p-4">
+        <h2 className="text-2xl font-bold mb-4">Tournaments</h2>
+
+        {admin && <CreateTournamentForm onCreate={refreshTournaments} />}
+        <TournamentList tournaments={tournaments} />
+      </div>
     </div>
   );
 }

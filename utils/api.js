@@ -132,24 +132,26 @@ export async function getTournaments() {
   return res.json();
 }
 
-export async function createTournament(data) {
+export const createTournament = async (tournamentData) => {
   const token = localStorage.getItem("token");
-  const res = await fetch(`${API_BASE}/tournaments`, {
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,  // Only if your route is admin-protected
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(tournamentData),
   });
 
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.detail || "Error creating tournament");
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || "Failed to create tournament");
   }
 
-  return res.json();
-}
+  return await response.json();
+};
+
 
 // ✅ Login user and store token
 export const loginUser = async (credentials) => {
