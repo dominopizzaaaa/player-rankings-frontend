@@ -30,6 +30,9 @@ const CustomNavbar = () => {
                 <Link href="/matches" passHref legacyBehavior>
                   <Nav.Link>Matches</Nav.Link>
                 </Link>
+                <Link href="/tournaments" passHref legacyBehavior>
+                  <Nav.Link>Tournaments</Nav.Link>
+                </Link>
                 <Link href="/manage-players" passHref legacyBehavior>
                   <Nav.Link>Add Player</Nav.Link>
                 </Link>
