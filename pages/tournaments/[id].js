@@ -114,7 +114,9 @@ export default function TournamentDetailsPage() {
       <div className="container mx-auto p-4">
         <h2 className="text-2xl font-bold mb-6">Tournament: {tournament.name}</h2>
         {renderMatches(tournament.group_matches, "Group Stage Matches")}
-        <GroupMatrixTable groupMatrix={tournament.group_matrix} playerNames={playerNames} />
+        {tournament?.group_matrix && (
+          <GroupMatrixTable groupMatrix={tournament.group_matrix} playerNames={playerNames} />
+        )}
         {renderMatches(tournament.knockout_matches, "Knockout Stage Matches")}
         {renderMatches(tournament.individual_matches, "Individual Matches")}
       </div>

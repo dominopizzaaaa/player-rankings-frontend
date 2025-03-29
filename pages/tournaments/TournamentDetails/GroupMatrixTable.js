@@ -4,11 +4,14 @@ export default function GroupMatrixTable({ groupMatrix, playerNames }) {
   if (!groupMatrix || !groupMatrix.players?.length) return null;
 
   const playerIds = groupMatrix.players;
+  const rankings = groupMatrix.rankings || [];
+  const results = groupMatrix.results || {};
 
   return (
     <div className="mt-10">
       <h3 className="text-xl font-bold mb-2">Group Stage Matrix</h3>
-      <div className="overflow-x-auto">
+
+      <div className="overflow-x-auto mb-6">
         <table className="min-w-full bg-white border border-gray-300 text-sm">
           <thead>
             <tr>
@@ -24,15 +27,23 @@ export default function GroupMatrixTable({ groupMatrix, playerNames }) {
                 <td className="border p-2 font-semibold">{playerNames[rowId]}</td>
                 {playerIds.map(colId => {
                   if (rowId === colId) {
-                    return <td key={colId} className="border p-2 text-center text-gray-400">—</td>;
+                    return (
+                      <td key={colId} className="border p-2 text-center text-gray-400">
+                        —
+                      </td>
+                    );
                   }
 
                   const key = `${rowId}-${colId}`;
                   const altKey = `${colId}-${rowId}`;
-                  const match = groupMatrix.results[key] || groupMatrix.results[altKey];
+                  const match = results[key] || results[altKey];
 
                   if (!match) {
-                    return <td key={colId} className="border p-2 text-center text-gray-400">–</td>;
+                    return (
+                      <td key={colId} className="border p-2 text-center text-gray-400">
+                        –
+                      </td>
+                    );
                   }
 
                   return (
@@ -48,6 +59,14 @@ export default function GroupMatrixTable({ groupMatrix, playerNames }) {
           </tbody>
         </table>
       </div>
+
+      {/* ✅ Rankings */}
+      <h4 className="text-lg font-semibold mb-1">Group Stage Rankings</h4>
+      <ol className="list-decimal list-inside">
+        {rankings.map((pid, idx) => (
+          <li key={pid}>{playerNames[pid]}</li>
+        ))}
+      </ol>
     </div>
   );
 }
