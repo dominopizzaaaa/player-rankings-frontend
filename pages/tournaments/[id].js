@@ -34,20 +34,32 @@ export default function TournamentDetailsPage() {
 
   const handleScoreSubmit = async (match) => {
     const form = document.getElementById(`match-form-${match.id}`);
-    const score1 = parseInt(form.player1_score.value);
-    const score2 = parseInt(form.player2_score.value);
-    const winner = parseInt(form.winner_id.value);
-
+    const winnerId = parseInt(form.winner_id.value);
+  
+    const sets = [];
+    let index = 0;
+    while (true) {
+      const p1Input = form[`set-${index}-p1`];
+      const p2Input = form[`set-${index}-p2`];
+      if (!p1Input || !p2Input) break;
+  
+      sets.push({
+        set_number: index + 1,
+        player1_score: parseInt(p1Input.value),
+        player2_score: parseInt(p2Input.value)
+      });
+      index++;
+    }
+  
     await submitMatchResult(match.id, {
       player1_id: match.player1_id,
       player2_id: match.player2_id,
-      player1_score: score1,
-      player2_score: score2,
-      winner_id: winner,
+      winner_id: winnerId,
+      sets: sets
     });
-
-    await fetchTournamentDetails(); // Refresh state
-  };
+  
+    getTournamentDetails(id).then(setTournament);
+  };  
 
   const renderMatches = (matches, stage) => (
     <div className="mb-6">
@@ -60,46 +72,51 @@ export default function TournamentDetailsPage() {
             </p>
             {admin && match.winner_id === null ? (
               <form
-                id={`match-form-${match.id}`}
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleScoreSubmit(match);
+              id={`match-form-${match.id}`}
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleScoreSubmit(match);
+              }}
+              className="mt-2 flex flex-col gap-2"
+            >
+              <div id={`set-list-${match.id}`}>
+                <div className="flex gap-2 items-center">
+                  <input name="set-0-p1" type="number" placeholder="P1" className="border p-1 rounded w-16" required />
+                  <span>-</span>
+                  <input name="set-0-p2" type="number" placeholder="P2" className="border p-1 rounded w-16" required />
+                </div>
+              </div>
+            
+              <button
+                type="button"
+                className="text-blue-600 text-sm underline mt-1 w-fit"
+                onClick={() => {
+                  const container = document.getElementById(`set-list-${match.id}`);
+                  const index = container.children.length;
+                  const div = document.createElement("div");
+                  div.className = "flex gap-2 items-center mt-1";
+                  div.innerHTML = `
+                    <input name="set-${index}-p1" type="number" placeholder="P1" class="border p-1 rounded w-16" required />
+                    <span>-</span>
+                    <input name="set-${index}-p2" type="number" placeholder="P2" class="border p-1 rounded w-16" required />
+                  `;
+                  container.appendChild(div);
                 }}
-                className="mt-2 flex gap-2 items-center"
               >
-                <input
-                  name="player1_score"
-                  type="number"
-                  className="border p-1 rounded w-12"
-                  required
-                />
-                <span> - </span>
-                <input
-                  name="player2_score"
-                  type="number"
-                  className="border p-1 rounded w-12"
-                  required
-                />
-                <select
-                  name="winner_id"
-                  className="border p-1 rounded"
-                  required
-                >
-                  <option value="">Winner</option>
-                  <option value={match.player1_id}>
-                    {playerNames[match.player1_id]}
-                  </option>
-                  <option value={match.player2_id}>
-                    {playerNames[match.player2_id]}
-                  </option>
-                </select>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-2 py-1 rounded"
-                >
-                  Submit
-                </button>
-              </form>
+                + Add Set
+              </button>
+            
+              <select name="winner_id" className="border p-1 rounded" required>
+                <option value="">Winner</option>
+                <option value={match.player1_id}>{playerNames[match.player1_id]}</option>
+                <option value={match.player2_id}>{playerNames[match.player2_id]}</option>
+              </select>
+            
+              <button type="submit" className="bg-blue-500 text-white px-2 py-1 rounded w-fit">
+                Submit
+              </button>
+            </form>
+            
             ) : (
               <p className="text-sm text-gray-600 mt-2">
                 {match.player1_score} - {match.player2_score} (Winner:{" "}
