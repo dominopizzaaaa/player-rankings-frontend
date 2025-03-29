@@ -73,49 +73,63 @@ export default function TournamentDetailsPage() {
             {admin && match.winner_id === null ? (
               <form
               id={`match-form-${match.id}`}
-              onSubmit={(e) => {
+              onSubmit={async e => {
                 e.preventDefault();
-                handleScoreSubmit(match);
+                const form = e.target;
+                const score1 = parseInt(form.player1_score.value);
+                const score2 = parseInt(form.player2_score.value);
+                const winnerId = parseInt(form.winner_id.value);
+                const setScores = [];
+            
+                const setCount = parseInt(form.set_count.value);
+                for (let i = 0; i < setCount; i++) {
+                  setScores.push([
+                    parseInt(form[`set${i}_p1`].value),
+                    parseInt(form[`set${i}_p2`].value)
+                  ]);
+                }
+            
+                await submitMatchResult(match.id, {
+                  player1_id: match.player1_id,
+                  player2_id: match.player2_id,
+                  player1_score: score1,
+                  player2_score: score2,
+                  winner_id: winnerId,
+                  set_scores: setScores
+                });
+            
+                getTournamentDetails(id).then(setTournament);
               }}
-              className="mt-2 flex flex-col gap-2"
+              className="mt-2 space-y-2"
             >
-              <div id={`set-list-${match.id}`}>
-                <div className="flex gap-2 items-center">
-                  <input name="set-0-p1" type="number" placeholder="P1" className="border p-1 rounded w-16" required />
-                  <span>-</span>
-                  <input name="set-0-p2" type="number" placeholder="P2" className="border p-1 rounded w-16" required />
-                </div>
+              <div className="flex items-center gap-2">
+                <input name="player1_score" type="number" className="border p-1 rounded w-14" placeholder="P1 Points" required />
+                <span>-</span>
+                <input name="player2_score" type="number" className="border p-1 rounded w-14" placeholder="P2 Points" required />
+                <select name="winner_id" className="border p-1 rounded" required>
+                  <option value="">Winner</option>
+                  <option value={match.player1_id}>{playerNames[match.player1_id]}</option>
+                  <option value={match.player2_id}>{playerNames[match.player2_id]}</option>
+                </select>
               </div>
             
-              <button
-                type="button"
-                className="text-blue-600 text-sm underline mt-1 w-fit"
-                onClick={() => {
-                  const container = document.getElementById(`set-list-${match.id}`);
-                  const index = container.children.length;
-                  const div = document.createElement("div");
-                  div.className = "flex gap-2 items-center mt-1";
-                  div.innerHTML = `
-                    <input name="set-${index}-p1" type="number" placeholder="P1" class="border p-1 rounded w-16" required />
-                    <span>-</span>
-                    <input name="set-${index}-p2" type="number" placeholder="P2" class="border p-1 rounded w-16" required />
-                  `;
-                  container.appendChild(div);
-                }}
-              >
-                + Add Set
-              </button>
+              <div>
+                <label>Set Count: </label>
+                <input name="set_count" type="number" className="border p-1 rounded w-16" min="1" defaultValue={3} required />
+              </div>
             
-              <select name="winner_id" className="border p-1 rounded" required>
-                <option value="">Winner</option>
-                <option value={match.player1_id}>{playerNames[match.player1_id]}</option>
-                <option value={match.player2_id}>{playerNames[match.player2_id]}</option>
-              </select>
+              <div id={`set-scores-${match.id}`} className="space-y-1">
+                {[0, 1, 2].map(i => (
+                  <div key={i} className="flex gap-2">
+                    <input name={`set${i}_p1`} type="number" placeholder={`Set ${i + 1} P1`} className="border p-1 rounded w-16" required />
+                    <input name={`set${i}_p2`} type="number" placeholder={`Set ${i + 1} P2`} className="border p-1 rounded w-16" required />
+                  </div>
+                ))}
+              </div>
             
-              <button type="submit" className="bg-blue-500 text-white px-2 py-1 rounded w-fit">
-                Submit
-              </button>
+              <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded">Submit</button>
             </form>
+            
             
             ) : (
               <p className="text-sm text-gray-600 mt-2">
