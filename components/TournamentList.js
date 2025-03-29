@@ -1,20 +1,22 @@
-import React from 'react';
+import Link from "next/link";
 
-export default function TournamentList({ tournaments }) {
-  if (!tournaments?.length) return <p>No tournaments yet.</p>;
-
+const TournamentList = ({ tournaments }) => {
   return (
-    <div className="space-y-4">
-      {tournaments.map(t => (
-        <div key={t.id} className="border rounded p-4 shadow">
-          <h3 className="text-lg font-semibold">{t.name}</h3>
-          <p>Date: {new Date(t.date).toLocaleDateString()}</p>
-          <p>Players: {t.num_players}</p>
-          <p>Groups: {t.num_groups}</p>
-          <p>Knockout size: {t.knockout_size}</p>
-          <p>Grouping: {t.grouping_mode}</p>
+    <div className="grid gap-4">
+      {tournaments.map((tournament) => (
+        <div key={tournament.id} className="bg-white p-4 rounded shadow">
+          <h3 className="text-lg font-bold">{tournament.name}</h3>
+          <p className="text-sm text-gray-600">Date: {tournament.date}</p>
+          <Link
+            href={`/tournaments/${tournament.id}`}
+            className="text-blue-600 hover:underline mt-2 inline-block"
+          >
+            View Details
+          </Link>
         </div>
       ))}
     </div>
   );
-}
+};
+
+export default TournamentList;
