@@ -5,12 +5,12 @@ import CustomNavbar from "../../components/Navbar";
 export default function TournamentDetailsPage() {
   const router = useRouter();
   const { id } = router.query;
-
   const [tournament, setTournament] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/details`)
       .then((res) => res.json())
       .then((data) => {
@@ -18,62 +18,87 @@ export default function TournamentDetailsPage() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to load tournament details", err);
+        console.error("Error fetching tournament details:", err);
         setLoading(false);
       });
   }, [id]);
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (!tournament) return <div className="p-4">Tournament not found</div>;
+  if (loading) return <div>Loading...</div>;
+  if (!tournament) return <div>Tournament not found.</div>;
 
   return (
     <div className="min-h-screen bg-gray-100">
       <CustomNavbar />
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">{tournament.name} Details</h1>
-        <p className="mb-4">Date: {tournament.date}</p>
+        <h2 className="text-2xl font-bold mb-4">{tournament.name}</h2>
 
-        {/* Group Stage Matches */}
-        <h2 className="text-xl font-semibold mb-2">Group Stage Matches</h2>
-        <MatchList matches={tournament.group_matches} />
+        {/* Group Matches */}
+        {tournament.group_matches.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Group Stage Matches</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {tournament.group_matches.map((match) => (
+                <div key={match.id} className="bg-white p-4 rounded shadow">
+                  <p>Player {match.player1_id} vs Player {match.player2_id}</p>
+                  <p>
+                    Score: {match.player1_score ?? "-"} - {match.player2_score ?? "-"}
+                  </p>
+                  <p>Winner: {match.winner_id ?? "TBD"}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {/* Knockout Stage */}
-        <h2 className="text-xl font-semibold mt-6 mb-2">Knockout Stage Matches</h2>
-        <MatchList matches={tournament.knockout_matches} />
+        {/* Knockout Matches */}
+        {tournament.knockout_matches.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Knockout Matches</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {tournament.knockout_matches.map((match) => (
+                <div key={match.id} className="bg-white p-4 rounded shadow">
+                  <p>Player {match.player1_id} vs Player {match.player2_id}</p>
+                  <p>
+                    Score: {match.player1_score ?? "-"} - {match.player2_score ?? "-"}
+                  </p>
+                  <p>Winner: {match.winner_id ?? "TBD"}</p>
+                  <p>Round: {match.round}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {/* Other Matches */}
-        <h2 className="text-xl font-semibold mt-6 mb-2">Other Matches</h2>
-        <MatchList matches={tournament.individual_matches} />
+        {/* Individual Matches */}
+        {tournament.individual_matches.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Other Matches</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {tournament.individual_matches.map((match) => (
+                <div key={match.id} className="bg-white p-4 rounded shadow">
+                  <p>Player {match.player1_id} vs Player {match.player2_id}</p>
+                  <p>
+                    Score: {match.player1_score ?? "-"} - {match.player2_score ?? "-"}
+                  </p>
+                  <p>Winner: {match.winner_id ?? "TBD"}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Final Standings */}
-        <h2 className="text-xl font-semibold mt-6 mb-2">Final Standings</h2>
-        <ol className="list-decimal list-inside bg-white p-4 rounded shadow">
-          {tournament.final_standings.map((playerId, index) => (
-            <li key={index}>Player ID: {playerId} – Place: {index + 1}</li>
-          ))}
-        </ol>
+        {tournament.final_standings.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-2">Final Standings</h3>
+            <ol className="list-decimal list-inside">
+              {tournament.final_standings.map((playerId, index) => (
+                <li key={playerId}>Player {playerId} ({["1st", "2nd", "3rd", "4th"][index]})</li>
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
-    </div>
-  );
-}
-
-function MatchList({ matches }) {
-  if (!matches || matches.length === 0) {
-    return <p className="text-gray-500">No matches.</p>;
-  }
-
-  return (
-    <div className="space-y-2">
-      {matches.map((match) => (
-        <div key={match.id} className="bg-white p-2 rounded shadow">
-          <p>
-            Player {match.player1_id} vs Player {match.player2_id}
-          </p>
-          <p>Score: {match.player1_score} - {match.player2_score}</p>
-          <p>Winner: {match.winner_id || "TBD"}</p>
-          <p>Round: {match.round} | Stage: {match.stage}</p>
-        </div>
-      ))}
     </div>
   );
 }
