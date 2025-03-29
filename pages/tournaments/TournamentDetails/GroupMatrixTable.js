@@ -62,11 +62,17 @@ export default function GroupMatrixTable({ groupMatrix, playerNames }) {
 
       {/* ✅ Rankings */}
       <h4 className="text-lg font-semibold mb-1">Group Stage Rankings</h4>
-      <ol className="list-decimal list-inside">
-        {rankings.map((pid, idx) => (
-          <li key={pid}>{playerNames[pid]}</li>
-        ))}
-      </ol>
+      {Object.entries(rankings).map(([groupNum, playerList]) => (
+        <div key={groupNum} className="mb-2">
+          <div className="font-semibold text-gray-700">Group {parseInt(groupNum) + 1}</div>
+          <ol className="list-decimal list-inside ml-4">
+            {playerList.map((pid) => (
+              <li key={pid}>{playerNames[pid]}</li>
+            ))}
+          </ol>
+        </div>
+      ))}
+
     </div>
   );
 }

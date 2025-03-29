@@ -1,4 +1,3 @@
-// pages/tournaments/TournamentDetails/TournamentMatchForm.js
 import { useState } from "react";
 
 export default function TournamentMatchForm({ match, playerNames, setCounts, setSetCounts, onSubmit }) {

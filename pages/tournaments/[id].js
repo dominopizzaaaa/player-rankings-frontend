@@ -7,6 +7,7 @@ import { getTournamentDetails, submitMatchResult } from "../../utils/api";
 import TournamentMatchForm from "./TournamentDetails/TournamentMatchForm";
 import TournamentMatchResultDisplay from "./TournamentDetails/TournamentMatchResultDisplay";
 import GroupMatrixTable from "./TournamentDetails/GroupMatrixTable";
+import KnockoutBracket from "./TournamentDetails/KnockoutBracket";
 
 export default function TournamentDetailsPage() {
   const router = useRouter();
@@ -118,6 +119,9 @@ export default function TournamentDetailsPage() {
           <GroupMatrixTable groupMatrix={tournament.group_matrix} playerNames={playerNames} />
         )}
         {renderMatches(tournament.knockout_matches, "Knockout Stage Matches")}
+        {tournament?.knockout_bracket && (
+          <KnockoutBracket bracket={tournament.knockout_bracket} playerNames={playerNames} />
+        )}
         {renderMatches(tournament.individual_matches, "Individual Matches")}
       </div>
     </div>
