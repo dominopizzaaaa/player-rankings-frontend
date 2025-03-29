@@ -1,4 +1,9 @@
+// pages/tournaments/TournamentDetails/TournamentMatchForm.js
+import { useState } from "react";
+
 export default function TournamentMatchForm({ match, playerNames, onSubmit }) {
+  const [setCount, setSetCount] = useState(1); // default to 1 for flexibility
+
   return (
     <form
       id={`match-form-${match.id}`}
@@ -13,7 +18,7 @@ export default function TournamentMatchForm({ match, playerNames, onSubmit }) {
           name="player1_score"
           type="number"
           className="border p-1 rounded w-14"
-          placeholder="P1 Score"
+          placeholder="P1 Points"
           required
         />
         <span>-</span>
@@ -21,7 +26,7 @@ export default function TournamentMatchForm({ match, playerNames, onSubmit }) {
           name="player2_score"
           type="number"
           className="border p-1 rounded w-14"
-          placeholder="P2 Score"
+          placeholder="P2 Points"
           required
         />
         <select name="winner_id" className="border p-1 rounded" required>
@@ -31,10 +36,29 @@ export default function TournamentMatchForm({ match, playerNames, onSubmit }) {
         </select>
       </div>
 
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-3 py-1 rounded mt-2"
-      >
+      {/* Placeholder for dynamic sets input if re-enabled in future */}
+      <div className="space-y-1 text-gray-500 text-xs">
+        Simulated sets will be calculated from points.
+      </div>
+
+      <div className="flex gap-2 mt-1">
+        <button
+          type="button"
+          className="text-blue-500 underline text-sm"
+          onClick={() => setSetCount(prev => prev + 1)}
+        >
+          + Add Set
+        </button>
+        <button
+          type="button"
+          className="text-red-500 underline text-sm"
+          onClick={() => setSetCount(prev => Math.max(1, prev - 1))}
+        >
+          - Remove Set
+        </button>
+      </div>
+
+      <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded mt-2">
         Submit
       </button>
     </form>

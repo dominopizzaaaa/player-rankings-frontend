@@ -39,17 +39,19 @@ export default function TournamentDetailsPage() {
     const winnerId = parseInt(form.winner_id.value);
     const player1_score = parseInt(form.player1_score.value);
     const player2_score = parseInt(form.player2_score.value);
-
-    // Submit with empty sets
+  
+    // For now, just send empty array; you can generate sets in backend if needed
+    const sets = [];
+  
     await submitMatchResult(match.id, {
       player1_id: match.player1_id,
       player2_id: match.player2_id,
       winner_id: winnerId,
       player1_score,
       player2_score,
-      sets: []
+      sets
     });
-
+  
     fetchTournamentDetails();
   };
 
