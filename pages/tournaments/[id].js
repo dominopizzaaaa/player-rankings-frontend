@@ -32,18 +32,18 @@ export default function TournamentDetailsPage() {
     const form = document.getElementById(`match-form-${match.id}`);
     const score1 = parseInt(form.player1_score.value);
     const score2 = parseInt(form.player2_score.value);
-  
+    const winner_id = parseInt(form.winner_id.value);
+
     await submitMatchResult(match.id, {
       player1_id: match.player1_id,
       player2_id: match.player2_id,
       player1_score: score1,
       player2_score: score2,
-      winner_id: match.winner_id,
+      winner_id: winner_id,
     });
-  
+
     getTournamentDetails(id).then(setTournament);
   };
-  
 
   const renderMatches = (matches, stage) => (
     <div className="mb-6">
@@ -69,7 +69,6 @@ export default function TournamentDetailsPage() {
                 </select>
                 <button type="submit" className="bg-blue-500 text-white px-2 py-1 rounded">Submit</button>
               </form>
-              
             ) : (
               <p className="text-sm text-gray-600">
                 {match.player1_score} - {match.player2_score} (Winner: {playerNames[match.winner_id]})
