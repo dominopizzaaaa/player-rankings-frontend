@@ -11,6 +11,7 @@ export default function TournamentDetailsPage() {
   const [tournament, setTournament] = useState(null);
   const [admin, setAdmin] = useState(false);
   const [playerNames, setPlayerNames] = useState({});
+  const [setInputs, setSetInputs] = useState(1);
 
   useEffect(() => {
     if (!id) return;
@@ -73,19 +74,21 @@ export default function TournamentDetailsPage() {
             {admin && match.winner_id === null ? (
               <form
               id={`match-form-${match.id}`}
-              onSubmit={async e => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 const form = e.target;
                 const score1 = parseInt(form.player1_score.value);
                 const score2 = parseInt(form.player2_score.value);
                 const winnerId = parseInt(form.winner_id.value);
-                const setScores = [];
             
-                const setCount = parseInt(form.set_count.value);
-                for (let i = 0; i < setCount; i++) {
-                  setScores.push([
-                    parseInt(form[`set${i}_p1`].value),
-                    parseInt(form[`set${i}_p2`].value)
+                const sets = [];
+                for (let i = 0; ; i++) {
+                  const p1 = form[`set${i}_p1`];
+                  const p2 = form[`set${i}_p2`];
+                  if (!p1 || !p2) break;
+                  sets.push([
+                    parseInt(p1.value),
+                    parseInt(p2.value),
                   ]);
                 }
             
@@ -95,7 +98,7 @@ export default function TournamentDetailsPage() {
                   player1_score: score1,
                   player2_score: score2,
                   winner_id: winnerId,
-                  set_scores: setScores
+                  set_scores: sets,
                 });
             
                 getTournamentDetails(id).then(setTournament);
@@ -113,13 +116,9 @@ export default function TournamentDetailsPage() {
                 </select>
               </div>
             
-              <div>
-                <label>Set Count: </label>
-                <input name="set_count" type="number" className="border p-1 rounded w-16" min="1" defaultValue={3} required />
-              </div>
-            
+              {/* Dynamic set inputs */}
               <div id={`set-scores-${match.id}`} className="space-y-1">
-                {[0, 1, 2].map(i => (
+                {Array.from({ length: setInputs }).map((_, i) => (
                   <div key={i} className="flex gap-2">
                     <input name={`set${i}_p1`} type="number" placeholder={`Set ${i + 1} P1`} className="border p-1 rounded w-16" required />
                     <input name={`set${i}_p2`} type="number" placeholder={`Set ${i + 1} P2`} className="border p-1 rounded w-16" required />
@@ -127,15 +126,34 @@ export default function TournamentDetailsPage() {
                 ))}
               </div>
             
-              <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded">Submit</button>
+              <button
+                type="button"
+                onClick={() => setSetInputs((prev) => prev + 1)}
+                className="text-blue-500 underline text-sm"
+              >
+                + Add Set
+              </button>
+            
+              <div>
+                <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded mt-2">Submit</button>
+              </div>
             </form>
             
-            
             ) : (
-              <p className="text-sm text-gray-600 mt-2">
-                {match.player1_score} - {match.player2_score} (Winner:{" "}
-                {playerNames[match.winner_id]})
-              </p>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>
+                  {match.player1_score !== null && match.player2_score !== null
+                    ? `${match.player1_score} - ${match.player2_score} (Winner: ${playerNames[match.winner_id]})`
+                    : `(Winner: ${playerNames[match.winner_id]})`
+                  }
+                </p>
+
+                {match.set_scores?.length > 0 && (
+                  <p className="text-xs text-gray-500">
+                    Sets: {match.set_scores.map((s, i) => `(${s[0]}-${s[1]})`).join(' ')}
+                  </p>
+                )}
+              </div>
             )}
           </div>
         ))}
