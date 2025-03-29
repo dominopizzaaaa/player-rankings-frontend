@@ -1,5 +1,9 @@
-export default function GroupMatrixTable({ playerNames, groupMatrix }) {
-  const playerIds = Object.keys(playerNames).map(Number);
+import React from "react";
+
+export default function GroupMatrixTable({ groupMatrix, playerNames }) {
+  if (!groupMatrix || !groupMatrix.players?.length) return null;
+
+  const playerIds = groupMatrix.players;
 
   return (
     <div className="mt-10">
@@ -19,10 +23,13 @@ export default function GroupMatrixTable({ playerNames, groupMatrix }) {
               <tr key={rowId}>
                 <td className="border p-2 font-semibold">{playerNames[rowId]}</td>
                 {playerIds.map(colId => {
-                  if (rowId === colId) return <td key={colId} className="border p-2 text-center text-gray-400">—</td>;
+                  if (rowId === colId) {
+                    return <td key={colId} className="border p-2 text-center text-gray-400">—</td>;
+                  }
 
-                  const key = [rowId, colId].sort((a, b) => a - b).join("-");
-                  const match = groupMatrix[key];
+                  const key = `${rowId}-${colId}`;
+                  const altKey = `${colId}-${rowId}`;
+                  const match = groupMatrix.results[key] || groupMatrix.results[altKey];
 
                   if (!match) {
                     return <td key={colId} className="border p-2 text-center text-gray-400">–</td>;
