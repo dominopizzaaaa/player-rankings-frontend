@@ -1,4 +1,3 @@
-// pages/tournaments/[id].js
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import CustomNavbar from "../../components/Navbar";
@@ -15,7 +14,6 @@ export default function TournamentDetailsPage() {
   const [tournament, setTournament] = useState(null);
   const [admin, setAdmin] = useState(false);
   const [playerNames, setPlayerNames] = useState({});
-  const [setCounts, setSetCounts] = useState({});
 
   useEffect(() => {
     if (!id) return;
@@ -34,49 +32,26 @@ export default function TournamentDetailsPage() {
   const fetchTournamentDetails = async () => {
     const data = await getTournamentDetails(id);
     setTournament(data);
-    const initialSetCounts = {};
-    [...data.group_matches, ...data.knockout_matches, ...data.individual_matches].forEach(
-      (match) => {
-        initialSetCounts[match.id] = Math.max(1, match.set_scores?.length || 1);
-      }
-    );
-    setSetCounts(initialSetCounts);
   };
 
   const handleScoreSubmit = async (match) => {
-  const form = document.getElementById(`match-form-${match.id}`);
-  const winnerId = parseInt(form.winner_id.value);
+    const form = document.getElementById(`match-form-${match.id}`);
+    const winnerId = parseInt(form.winner_id.value);
+    const player1_score = parseInt(form.player1_score.value);
+    const player2_score = parseInt(form.player2_score.value);
 
-  // ✅ NEW: Extract point scores
-  const player1_score = parseInt(form.player1_score.value);
-  const player2_score = parseInt(form.player2_score.value);
-
-  const sets = [];
-  let index = 0;
-  while (true) {
-    const p1Input = form[`set-${index}-p1`];
-    const p2Input = form[`set-${index}-p2`];
-    if (!p1Input || !p2Input) break;
-
-    sets.push({
-      set_number: index + 1,
-      player1_score: parseInt(p1Input.value),
-      player2_score: parseInt(p2Input.value),
+    // Submit with empty sets
+    await submitMatchResult(match.id, {
+      player1_id: match.player1_id,
+      player2_id: match.player2_id,
+      winner_id: winnerId,
+      player1_score,
+      player2_score,
+      sets: []
     });
-    index++;
-  }
 
-  await submitMatchResult(match.id, {
-    player1_id: match.player1_id,
-    player2_id: match.player2_id,
-    winner_id: winnerId,
-    player1_score,     // ✅ required by backend
-    player2_score,     // ✅ required by backend
-    sets,
-  });
-
-  fetchTournamentDetails();
-};
+    fetchTournamentDetails();
+  };
 
   const renderMatches = (matches, stage) => (
     <div className="mb-6">
@@ -90,8 +65,6 @@ export default function TournamentDetailsPage() {
               <TournamentMatchForm
                 match={match}
                 playerNames={playerNames}
-                setCounts={setCounts}
-                setSetCounts={setSetCounts}
                 onSubmit={handleScoreSubmit}
               />
             ) : (

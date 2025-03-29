@@ -60,13 +60,47 @@ export default function GroupMatrixTable({ groupMatrix, playerNames }) {
         </table>
       </div>
 
-      {/* ✅ Rankings */}
-      <h4 className="text-lg font-semibold mb-1">Group Stage Rankings</h4>
-      <ol className="list-decimal list-inside">
-        {rankings.map((pid, idx) => (
-          <li key={pid}>{playerNames[pid]}</li>
-        ))}
-      </ol>
+      {groupMatrix.rankings && Object.keys(groupMatrix.rankings).length > 0 && (
+  <div className="mt-8">
+    <h4 className="text-lg font-semibold mb-2">Group Stage Rankings</h4>
+
+    {Object.entries(groupMatrix.rankings).map(([groupNum, players]) => (
+      <div key={groupNum} className="mb-6">
+        <h5 className="text-md font-semibold mb-1">Group {parseInt(groupNum) + 1}</h5>
+
+        <table className="w-full text-sm border border-gray-300">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border px-2 py-1 text-left">#</th>
+              <th className="border px-2 py-1 text-left">Player</th>
+              <th className="border px-2 py-1 text-center">Matches</th>
+              <th className="border px-2 py-1 text-center">Sets</th>
+              <th className="border px-2 py-1 text-center">Points</th>
+            </tr>
+          </thead>
+          <tbody>
+            {players.map((pid, idx) => {
+              const stats = groupMatrix.player_stats?.[pid] || {
+                wins: 0, losses: 0, set_wins: 0, set_losses: 0, points_won: 0, points_lost: 0
+              };
+
+              return (
+                <tr key={pid} className="border-t">
+                  <td className="border px-2 py-1 text-center">{idx + 1}</td>
+                  <td className="border px-2 py-1">{playerNames[pid]}</td>
+                  <td className="border px-2 py-1 text-center">{stats.wins} - {stats.losses}</td>
+                  <td className="border px-2 py-1 text-center">{stats.set_wins} - {stats.set_losses}</td>
+                  <td className="border px-2 py-1 text-center">{stats.points_won} - {stats.points_lost}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    ))}
+  </div>
+)}
+
     </div>
   );
 }
