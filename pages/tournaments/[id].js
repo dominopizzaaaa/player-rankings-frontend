@@ -95,3 +95,28 @@ export default function TournamentDetailsPage() {
     </div>
   );
 }
+
+// ✅ Fetch tournament details
+export async function getTournamentDetails(id) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/details`);
+  if (!res.ok) throw new Error("Failed to fetch tournament details");
+  return await res.json();
+}
+
+// ✅ Submit a match result
+export async function submitMatchResult(matchId, winnerId, player1Score, player2Score) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ winner_id: winnerId, player1_score: player1Score, player2_score: player2Score }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.detail || "Failed to submit match result");
+  }
+
+  return await res.json();
+}
