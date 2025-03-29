@@ -52,14 +52,20 @@ export default function TournamentDetailsPage() {
                 const form = e.target;
                 const score1 = form.player1_score.value;
                 const score2 = form.player2_score.value;
-                const winner = score1 > score2 ? match.player1_id : match.player2_id;
+                const winner = form.winner_id.value;
                 handleScoreSubmit(match.id, winner, score1, score2);
               }} className="mt-2 flex gap-2 items-center">
                 <input name="player1_score" type="number" className="border p-1 rounded w-12" required />
                 <span> - </span>
                 <input name="player2_score" type="number" className="border p-1 rounded w-12" required />
+                <select name="winner_id" className="border p-1 rounded" required>
+                  <option value="">Winner</option>
+                  <option value={match.player1_id}>{playerNames[match.player1_id]}</option>
+                  <option value={match.player2_id}>{playerNames[match.player2_id]}</option>
+                </select>
                 <button type="submit" className="bg-blue-500 text-white px-2 py-1 rounded">Submit</button>
               </form>
+              
             ) : (
               <p className="text-sm text-gray-600">
                 {match.player1_score} - {match.player2_score} (Winner: {playerNames[match.winner_id]})
