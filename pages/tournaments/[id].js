@@ -28,14 +28,22 @@ export default function TournamentDetailsPage() {
     if (isAdmin()) setAdmin(true);
   }, [id]);
 
-  const handleScoreSubmit = async (matchId, winnerId, score1, score2) => {
-    await submitMatchResult(matchId, {
-      winner_id: winnerId,
-      player1_score: parseInt(score1),
-      player2_score: parseInt(score2)
+  const handleScoreSubmit = async (match) => {
+    const form = document.getElementById(`match-form-${match.id}`);
+    const score1 = parseInt(form.player1_score.value);
+    const score2 = parseInt(form.player2_score.value);
+  
+    await submitMatchResult(match.id, {
+      player1_id: match.player1_id,
+      player2_id: match.player2_id,
+      player1_score: score1,
+      player2_score: score2,
+      winner_id: match.winner_id,
     });
+  
     getTournamentDetails(id).then(setTournament);
   };
+  
 
   const renderMatches = (matches, stage) => (
     <div className="mb-6">
@@ -47,13 +55,9 @@ export default function TournamentDetailsPage() {
               {playerNames[match.player1_id]} vs {playerNames[match.player2_id]}
             </p>
             {admin ? (
-              <form onSubmit={e => {
+              <form id={`match-form-${match.id}`} onSubmit={e => {
                 e.preventDefault();
-                const form = e.target;
-                const score1 = form.player1_score.value;
-                const score2 = form.player2_score.value;
-                const winner = form.winner_id.value;
-                handleScoreSubmit(match.id, winner, score1, score2);
+                handleScoreSubmit(match);
               }} className="mt-2 flex gap-2 items-center">
                 <input name="player1_score" type="number" className="border p-1 rounded w-12" required />
                 <span> - </span>

@@ -90,7 +90,6 @@ export const deleteMatch = async (id) => {
   }
 };
 
-
 // ✅ Update a player (Admin only)
 export const updatePlayer = async (id, playerData) => {
   try {
@@ -152,7 +151,6 @@ export const createTournament = async (tournamentData) => {
   return await response.json();
 };
 
-
 // ✅ Login user and store token
 export const loginUser = async (credentials) => {
   try {
@@ -186,13 +184,13 @@ export async function getTournamentDetails(id) {
 }
 
 // ✅ Submit a match result
-export async function submitMatchResult(matchId, winnerId, player1Score, player2Score) {
+export async function submitMatchResult(matchId, result) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ winner_id: winnerId, player1_score: player1Score, player2_score: player2Score }),
+    body: JSON.stringify(result),
   });
 
   if (!res.ok) {
