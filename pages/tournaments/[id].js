@@ -43,33 +43,39 @@ export default function TournamentDetailsPage() {
   };
 
   const handleScoreSubmit = async (match) => {
-    const form = document.getElementById(`match-form-${match.id}`);
-    const winnerId = parseInt(form.winner_id.value);
+  const form = document.getElementById(`match-form-${match.id}`);
+  const winnerId = parseInt(form.winner_id.value);
 
-    const sets = [];
-    let index = 0;
-    while (true) {
-      const p1Input = form[`set-${index}-p1`];
-      const p2Input = form[`set-${index}-p2`];
-      if (!p1Input || !p2Input) break;
+  // ✅ NEW: Extract point scores
+  const player1_score = parseInt(form.player1_score.value);
+  const player2_score = parseInt(form.player2_score.value);
 
-      sets.push({
-        set_number: index + 1,
-        player1_score: parseInt(p1Input.value),
-        player2_score: parseInt(p2Input.value)
-      });
-      index++;
-    }
+  const sets = [];
+  let index = 0;
+  while (true) {
+    const p1Input = form[`set-${index}-p1`];
+    const p2Input = form[`set-${index}-p2`];
+    if (!p1Input || !p2Input) break;
 
-    await submitMatchResult(match.id, {
-      player1_id: match.player1_id,
-      player2_id: match.player2_id,
-      winner_id: winnerId,
-      sets: sets
+    sets.push({
+      set_number: index + 1,
+      player1_score: parseInt(p1Input.value),
+      player2_score: parseInt(p2Input.value),
     });
+    index++;
+  }
 
-    fetchTournamentDetails();
-  };
+  await submitMatchResult(match.id, {
+    player1_id: match.player1_id,
+    player2_id: match.player2_id,
+    winner_id: winnerId,
+    player1_score,     // ✅ required by backend
+    player2_score,     // ✅ required by backend
+    sets,
+  });
+
+  fetchTournamentDetails();
+};
 
   const renderMatches = (matches, stage) => (
     <div className="mb-6">
