@@ -16,62 +16,94 @@ export default function TournamentDetailsPage() {
     if (!id) return;
 
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then(res => res.json())
-      .then(data => {
-        const nameMap = {};
-        data.forEach(p => nameMap[p.id] = p.name);
-        setPlayerNames(nameMap);
+      .then((res) => res.json())
+      .then((data) => {
+        const map = {};
+        data.forEach((p) => (map[p.id] = p.name));
+        setPlayerNames(map);
       });
 
-    getTournamentDetails(id).then(setTournament);
-
     if (isAdmin()) setAdmin(true);
+    fetchTournamentDetails();
   }, [id]);
+
+  const fetchTournamentDetails = async () => {
+    const data = await getTournamentDetails(id);
+    setTournament(data);
+  };
 
   const handleScoreSubmit = async (match) => {
     const form = document.getElementById(`match-form-${match.id}`);
     const score1 = parseInt(form.player1_score.value);
     const score2 = parseInt(form.player2_score.value);
-    const winner_id = parseInt(form.winner_id.value);
+    const winner = parseInt(form.winner_id.value);
 
     await submitMatchResult(match.id, {
       player1_id: match.player1_id,
       player2_id: match.player2_id,
       player1_score: score1,
       player2_score: score2,
-      winner_id: winner_id,
+      winner_id: winner,
     });
 
-    getTournamentDetails(id).then(setTournament);
+    await fetchTournamentDetails(); // Refresh state
   };
 
   const renderMatches = (matches, stage) => (
     <div className="mb-6">
       <h3 className="text-xl font-semibold mb-2">{stage}</h3>
       <div className="space-y-2">
-        {matches.map(match => (
+        {matches.map((match) => (
           <div key={match.id} className="bg-white p-3 rounded shadow">
             <p>
               {playerNames[match.player1_id]} vs {playerNames[match.player2_id]}
             </p>
-            {admin ? (
-              <form id={`match-form-${match.id}`} onSubmit={e => {
-                e.preventDefault();
-                handleScoreSubmit(match);
-              }} className="mt-2 flex gap-2 items-center">
-                <input name="player1_score" type="number" className="border p-1 rounded w-12" required />
+            {admin && match.winner_id === null ? (
+              <form
+                id={`match-form-${match.id}`}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleScoreSubmit(match);
+                }}
+                className="mt-2 flex gap-2 items-center"
+              >
+                <input
+                  name="player1_score"
+                  type="number"
+                  className="border p-1 rounded w-12"
+                  required
+                />
                 <span> - </span>
-                <input name="player2_score" type="number" className="border p-1 rounded w-12" required />
-                <select name="winner_id" className="border p-1 rounded" required>
+                <input
+                  name="player2_score"
+                  type="number"
+                  className="border p-1 rounded w-12"
+                  required
+                />
+                <select
+                  name="winner_id"
+                  className="border p-1 rounded"
+                  required
+                >
                   <option value="">Winner</option>
-                  <option value={match.player1_id}>{playerNames[match.player1_id]}</option>
-                  <option value={match.player2_id}>{playerNames[match.player2_id]}</option>
+                  <option value={match.player1_id}>
+                    {playerNames[match.player1_id]}
+                  </option>
+                  <option value={match.player2_id}>
+                    {playerNames[match.player2_id]}
+                  </option>
                 </select>
-                <button type="submit" className="bg-blue-500 text-white px-2 py-1 rounded">Submit</button>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-2 py-1 rounded"
+                >
+                  Submit
+                </button>
               </form>
             ) : (
-              <p className="text-sm text-gray-600">
-                {match.player1_score} - {match.player2_score} (Winner: {playerNames[match.winner_id]})
+              <p className="text-sm text-gray-600 mt-2">
+                {match.player1_score} - {match.player2_score} (Winner:{" "}
+                {playerNames[match.winner_id]})
               </p>
             )}
           </div>
@@ -95,9 +127,13 @@ export default function TournamentDetailsPage() {
         <div className="mt-8">
           <h3 className="text-xl font-semibold">Final Standings</h3>
           <ol className="list-decimal list-inside mt-2">
-            {tournament.final_standings.map((pid, i) => (
-              <li key={i}>{playerNames[pid]}</li>
-            ))}
+            {tournament.final_standings.length === 0 ? (
+              <li>Not available yet</li>
+            ) : (
+              tournament.final_standings.map((pid, i) => (
+                <li key={i}>{playerNames[pid]}</li>
+              ))
+            )}
           </ol>
         </div>
       </div>
