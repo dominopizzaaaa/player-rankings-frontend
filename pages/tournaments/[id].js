@@ -34,7 +34,7 @@ export default function TournamentDetailsPage() {
     const initialSetCounts = {};
     [...data.group_matches, ...data.knockout_matches, ...data.individual_matches].forEach(
       (match) => {
-        initialSetCounts[match.id] = 1;
+        initialSetCounts[match.id] = Math.max(1, match.set_scores?.length || 1);
       }
     );
     setSetCounts(initialSetCounts);
@@ -142,7 +142,16 @@ export default function TournamentDetailsPage() {
 
                 {match.set_scores?.length > 0 && (
                   <p className="text-xs text-gray-500">
-                    Sets: {match.set_scores.map((s, i) => `(${s[0]}-${s[1]})`).join(" ")}
+                    Sets:{" "}
+                    {match.set_scores.map((s, i) => `(${s[0]}-${s[1]})`).join(" ")}{" "}
+                    —{" "}
+                    {
+                      (() => {
+                        const p1SetWins = match.set_scores.filter(s => s[0] > s[1]).length;
+                        const p2SetWins = match.set_scores.filter(s => s[1] > s[0]).length;
+                        return `${p1SetWins}–${p2SetWins}`;
+                      })()
+                    }
                   </p>
                 )}
               </div>
