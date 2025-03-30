@@ -1,4 +1,3 @@
-// pages/tournaments/[id].js
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import CustomNavbar from "../../components/Navbar";
@@ -45,26 +44,26 @@ export default function TournamentDetailsPage() {
   };
 
   const handleScoreSubmit = async (match) => {
-  const form = document.getElementById(`match-form-${match.id}`);
-  const winnerId = parseInt(form.winner_id.value);
+    const form = document.getElementById(`match-form-${match.id}`);
+    const winnerId = parseInt(form.winner_id.value);
 
-  // ✅ NEW: Extract point scores
-  const player1_score = parseInt(form.player1_score.value);
-  const player2_score = parseInt(form.player2_score.value);
+    // ✅ NEW: Extract point scores
+    const player1_score = parseInt(form.player1_score.value);
+    const player2_score = parseInt(form.player2_score.value);
 
-  const sets = [];
-  let index = 0;
-  while (true) {
-    const p1Input = form[`set-${index}-p1`];
-    const p2Input = form[`set-${index}-p2`];
-    if (!p1Input || !p2Input) break;
+    const sets = [];
+    let index = 0;
+    while (true) {
+      const p1Input = form[`set-${index}-p1`];
+      const p2Input = form[`set-${index}-p2`];
+      if (!p1Input || !p2Input) break;
 
-    sets.push({
-      set_number: index + 1,
-      player1_score: parseInt(p1Input.value),
-      player2_score: parseInt(p2Input.value),
-    });
-    index++;
+      sets.push({
+        set_number: index + 1,
+        player1_score: parseInt(p1Input.value),
+        player2_score: parseInt(p2Input.value),
+      });
+      index++;
   }
 
   await submitMatchResult(match.id, {
@@ -77,7 +76,11 @@ export default function TournamentDetailsPage() {
   });
 
   fetchTournamentDetails();
-};
+  };
+
+  const getPlayerName = (playerId) => {
+    return playerNames[playerId] || "Unknown";
+  };  
 
   const renderMatches = (matches, stage) => (
     <div className="mb-6">
@@ -122,7 +125,21 @@ export default function TournamentDetailsPage() {
         {tournament?.knockout_bracket && (
           <KnockoutBracket bracket={tournament.knockout_bracket} playerNames={playerNames} />
         )}
-        {renderMatches(tournament.individual_matches, "Individual Matches")}
+        {tournament.final_standings && (
+          <div className="mt-4">
+            <h2 className="text-xl font-semibold">Final Standings</h2>
+            <ul>
+              <li>🥇 1st: {getPlayerName(tournament.final_standings["1st"])}</li>
+              <li>🥈 2nd: {getPlayerName(tournament.final_standings["2nd"])}</li>
+              {tournament.final_standings["3rd"] && (
+                <li>🥉 3rd: {getPlayerName(tournament.final_standings["3rd"])}</li>
+              )}
+              {tournament.final_standings["4th"] && (
+                <li>4th: {getPlayerName(tournament.final_standings["4th"])}</li>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
