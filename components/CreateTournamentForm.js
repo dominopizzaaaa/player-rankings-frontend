@@ -5,7 +5,7 @@ const CreateTournamentForm = ({ onCreated }) => {
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [numGroups, setNumGroups] = useState(0);
-  const [knockoutSize, setKnockoutSize] = useState(0);
+  const [playersPerGroupAdvancing, setPlayersPerGroupAdvancing] = useState(1);
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState({});
 
@@ -40,7 +40,7 @@ const CreateTournamentForm = ({ onCreated }) => {
       name,
       date,
       num_groups: parseInt(numGroups),
-      knockout_size: parseInt(knockoutSize),
+      players_per_group_advancing: numGroups > 0 ? playersPerGroupAdvancing : undefined,
       player_ids: selectedPlayerIDs,
     };
 
@@ -101,20 +101,22 @@ const CreateTournamentForm = ({ onCreated }) => {
             onChange={(e) => setNumGroups(e.target.value)}
           />
         </div>
-  
-        {/* Knockout Size */}
-        <div>
-          <label className="block font-semibold mb-1" htmlFor="knockout-size">
-            Knockout Size (e.g. 4, 8, 16)
-          </label>
-          <input
-            id="knockout-size"
-            className="w-full p-2 border rounded"
-            type="number"
-            value={knockoutSize}
-            onChange={(e) => setKnockoutSize(e.target.value)}
-          />
-        </div>
+
+        {/* Number of players advancing per group */}
+        {numGroups > 0 && (
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              Number of players advancing per group
+            </label>
+            <input
+              type="number"
+              value={playersPerGroupAdvancing}
+              onChange={(e) => setPlayersPerGroupAdvancing(Number(e.target.value))}
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+        )}
+
   
         {/* Player Selection */}
         <div>
