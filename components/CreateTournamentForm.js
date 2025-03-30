@@ -6,7 +6,6 @@ const CreateTournamentForm = ({ onCreated }) => {
   const [date, setDate] = useState("");
   const [numGroups, setNumGroups] = useState(0);
   const [knockoutSize, setKnockoutSize] = useState(0);
-  const [groupingMode, setGroupingMode] = useState("ranked");
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState({});
 
@@ -42,7 +41,6 @@ const CreateTournamentForm = ({ onCreated }) => {
       date,
       num_groups: parseInt(numGroups),
       knockout_size: parseInt(knockoutSize),
-      grouping_mode: groupingMode,
       player_ids: selectedPlayerIDs,
     };
 
@@ -116,22 +114,6 @@ const CreateTournamentForm = ({ onCreated }) => {
             value={knockoutSize}
             onChange={(e) => setKnockoutSize(e.target.value)}
           />
-        </div>
-  
-        {/* Grouping Mode */}
-        <div>
-          <label className="block font-semibold mb-1" htmlFor="grouping-mode">
-            Grouping Mode
-          </label>
-          <select
-            id="grouping-mode"
-            className="w-full p-2 border rounded"
-            value={groupingMode}
-            onChange={(e) => setGroupingMode(e.target.value)}
-          >
-            <option value="ranked">Ranking-based Grouping</option>
-            <option value="random">Random Grouping</option>
-          </select>
         </div>
   
         {/* Player Selection */}
