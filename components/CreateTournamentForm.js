@@ -40,7 +40,7 @@ const CreateTournamentForm = ({ onCreated }) => {
       name,
       date,
       num_groups: parseInt(numGroups),
-      players_per_group_advancing: numGroups > 0 ? playersPerGroupAdvancing : undefined,
+      players_per_group_advancing: numGroups > 0 ? playersPerGroupAdvancing : 0,
       player_ids: selectedPlayerIDs,
     };
 

@@ -145,7 +145,8 @@ export const createTournament = async (tournamentData) => {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || "Failed to create tournament");
+    console.error("Tournament creation error:", error);
+    throw new Error(JSON.stringify(error));
   }
 
   return await response.json();
