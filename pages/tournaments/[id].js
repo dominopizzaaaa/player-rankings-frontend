@@ -19,17 +19,31 @@ export default function TournamentDetailsPage() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then((res) => res.json())
-      .then((data) => {
-        const map = {};
-        data.forEach((p) => (map[p.id] = p.name));
-        setPlayerNames(map);
-      });
-
+  
+    const loadData = async () => {
+      // 1. Fetch players first
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`);
+      const data = await res.json();
+      const map = {};
+      data.forEach((p) => (map[p.id] = p.name));
+      setPlayerNames(map);
+  
+      // 2. Only THEN fetch tournament
+      const tournamentData = await getTournamentDetails(id);
+      setTournament(tournamentData);
+  
+      const initialSetCounts = {};
+      [...tournamentData.group_matches, ...tournamentData.knockout_matches, ...tournamentData.individual_matches].forEach(
+        (match) => {
+          initialSetCounts[match.id] = Math.max(1, match.set_scores?.length || 1);
+        }
+      );
+      setSetCounts(initialSetCounts);
+    };
+  
+    loadData();
     if (isAdmin()) setAdmin(true);
-    fetchTournamentDetails();
-  }, [id]);
+  }, [id]);  
 
   const fetchTournamentDetails = async () => {
     const data = await getTournamentDetails(id);
@@ -79,7 +93,8 @@ export default function TournamentDetailsPage() {
   };
 
   const getPlayerName = (playerId) => {
-    return playerNames[playerId] || "Unknown";
+    if (!playerId) return "TBD";
+    return playerNames[playerId] || `Player #${playerId}`;
   };  
 
   const renderMatches = (matches, stage) => (
@@ -129,13 +144,13 @@ export default function TournamentDetailsPage() {
           <div className="mt-4">
             <h2 className="text-xl font-semibold">Final Standings</h2>
             <ul>
-              <li>🥇 1st: {getPlayerName(tournament.final_standings["1st"])}</li>
-              <li>🥈 2nd: {getPlayerName(tournament.final_standings["2nd"])}</li>
-              {tournament.final_standings["3rd"] && (
-                <li>🥉 3rd: {getPlayerName(tournament.final_standings["3rd"])}</li>
+              <li>🥇 1st: {getPlayerName(tournament.final_standings["1"])}</li>
+              <li>🥈 2nd: {getPlayerName(tournament.final_standings["2"])}</li>
+              {tournament.final_standings["3"] && (
+                <li>🥉 3rd: {getPlayerName(tournament.final_standings["3"])}</li>
               )}
-              {tournament.final_standings["4th"] && (
-                <li>4th: {getPlayerName(tournament.final_standings["4th"])}</li>
+              {tournament.final_standings["4"] && (
+                <li>4th: {getPlayerName(tournament.final_standings["4"])}</li>
               )}
             </ul>
           </div>
