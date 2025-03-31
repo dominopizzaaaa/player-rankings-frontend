@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createTournament } from "../utils/api";
+import { createTournament } from "../../utils/api";
 
 const CreateTournamentForm = ({ onCreated }) => {
   const [name, setName] = useState("");

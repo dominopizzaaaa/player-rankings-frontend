@@ -1,68 +1,74 @@
 import Link from "next/link";
-import { Navbar, Nav, Container } from "react-bootstrap";
 import { useEffect, useState } from "react";
 
-const CustomNavbar = () => {
+export default function CustomNavbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mounted, setMounted] = useState(false); // ⬅️ track client-side render
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
+    setMounted(true);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login"; // Redirect to login page
+    window.location.href = "/login";
   };
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Container>
-        <Navbar.Brand href="/">🏓 Elo Rankings</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
-            <Link href="/" passHref legacyBehavior>
-              <Nav.Link>Leaderboard</Nav.Link>
+    <nav className="bg-gray-900 text-white shadow-md">
+      <div className="max-w-screen-2xl mx-auto px-6 py-3 flex items-center justify-between">
+        {/* Brand */}
+        <Link href="/" className="text-xl font-bold whitespace-nowrap">
+          🏓 Elo Rankings
+        </Link>
+
+        {/* Links container */}
+        {mounted && (
+          <div className="flex overflow-x-auto whitespace-nowrap gap-6 text-sm font-medium ml-8">
+            <Link href="/" className="hover:text-yellow-300">
+              Leaderboard
             </Link>
-            {isAuthenticated && (
+
+            {isAuthenticated ? (
               <>
-                <Link href="/matches" passHref legacyBehavior>
-                  <Nav.Link>Matches</Nav.Link>
+                <Link href="/matches/add-matches" className="hover:text-yellow-300">
+                  Matches
                 </Link>
-                <Link href="/tournaments" passHref legacyBehavior>
-                  <Nav.Link>Tournaments</Nav.Link>
+                <Link href="/tournaments" className="hover:text-yellow-300">
+                  Tournaments
                 </Link>
-                <Link href="/manage-players" passHref legacyBehavior>
-                  <Nav.Link>Add Player</Nav.Link>
+                <Link href="/players/add-players" className="hover:text-yellow-300">
+                  Add Player
                 </Link>
-                <Link href="/delete-players" passHref legacyBehavior>
-                  <Nav.Link>Delete Players</Nav.Link>
+                <Link href="/players/delete-players" className="hover:text-yellow-300">
+                  Delete Players
                 </Link>
-                <Link href="/delete-matches" passHref legacyBehavior>
-                  <Nav.Link>Delete Matches</Nav.Link>
+                <Link href="/matches/delete-matches" className="hover:text-yellow-300">
+                  Delete Matches
                 </Link>
-                <Link href="/edit-players" passHref legacyBehavior>
-                  <Nav.Link>Edit Players</Nav.Link>
+                <Link href="/players/edit-players" className="hover:text-yellow-300">
+                  Edit Players
                 </Link>
-                <Link href="/edit-matches" passHref legacyBehavior>
-                  <Nav.Link>Edit Matches</Nav.Link>
+                <Link href="/matches/edit-matches" className="hover:text-yellow-300">
+                  Edit Matches
                 </Link>
-                <Nav.Link onClick={handleLogout} style={{ cursor: "pointer", color: "red" }}>
+                <button
+                  onClick={handleLogout}
+                  className="text-red-400 hover:text-red-600"
+                >
                   Logout
-                </Nav.Link>
+                </button>
               </>
-            )}
-            {!isAuthenticated && (
-              <Link href="/login" passHref legacyBehavior>
-                <Nav.Link>Login</Nav.Link>
+            ) : (
+              <Link href="/login" className="hover:text-yellow-300">
+                Login
               </Link>
             )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          </div>
+        )}
+      </div>
+    </nav>
   );
-};
-
-export default CustomNavbar;
+}

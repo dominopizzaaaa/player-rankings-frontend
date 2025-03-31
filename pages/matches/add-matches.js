@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import SubmitMatch from "../components/SubmitMatch";
+import Navbar from "../../components/Navbar";
+import SubmitMatch from "./SubmitMatch";
 import Link from "next/link";
-import { isAdmin } from "../utils/auth"; // ✅ Import auth check
+import { isAdmin } from "../../utils/auth"; // ✅ Import auth check
 import { useRouter } from "next/router";
 
-const Matches = () => {
+const AddMatches = () => {
   const [matches, setMatches] = useState([]);
   const [players, setPlayers] = useState({}); // Store player names
   const router = useRouter();
@@ -107,4 +107,4 @@ const Matches = () => {
   );
 };
 
-export default Matches;
+export default AddMatches;

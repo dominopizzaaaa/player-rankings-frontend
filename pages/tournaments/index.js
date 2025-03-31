@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import CustomNavbar from "../components/Navbar";
-import CreateTournamentForm from "../components/CreateTournamentForm";
-import TournamentList from "../components/TournamentList";
-import { isAdmin } from "../utils/auth";
+import CustomNavbar from "../../components/Navbar";
+import CreateTournamentForm from "./CreateTournamentForm";
+import TournamentList from "./TournamentList";
+import { isAdmin } from "../../utils/auth";
 
 export default function TournamentsPage() {
   const [tournaments, setTournaments] = useState([]);

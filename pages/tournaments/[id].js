@@ -97,11 +97,29 @@ export default function TournamentDetailsPage() {
 
   const renderMatches = (matches, title) => (
     <div className="mb-10">
-      <h3 className="text-2xl font-semibold mb-3 text-gray-800">{title}</h3>
-      <div className="grid gap-4">
+      <h3 className="text-xl font-semibold mb-3 text-gray-800 flex justify-between items-center">
+        {admin && (
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200 mr-4"
+            onClick={async () => {
+              if (confirm("Are you sure you want to reset this tournament? This will delete all matches.")) {
+                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${tournament.id}/reset`, {
+                  method: "POST"
+                });
+                alert("Tournament has been reset. You can now regenerate matches.");
+                location.reload();
+              }
+            }}
+          >
+            Reset Tournament
+          </button>
+        )}
+        {title}
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {matches.map((match) => (
-          <div key={match.id} className="bg-white p-4 rounded shadow border">
-            <p className="mb-2 font-medium text-gray-700">
+          <div key={match.id} className="bg-white p-3 rounded border border-gray-300 text-sm">
+            <p className="mb-1 font-medium text-gray-700">
               {getPlayerName(match.player1_id)} vs {getPlayerName(match.player2_id)}
             </p>
 
@@ -131,23 +149,6 @@ export default function TournamentDetailsPage() {
         <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
           Tournament: {tournament.name}
         </h2>
-        {admin && (
-          <button
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200"
-            onClick={async () => {
-              if (confirm("Are you sure you want to reset this tournament? This will delete all matches.")) {
-                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${tournament.id}/reset`, {
-                  method: "POST"
-                });
-                alert("Tournament has been reset. You can now regenerate matches.");
-                location.reload();
-              }
-            }}
-          >
-            Reset Tournament
-          </button>
-        )}
-
 
         {renderMatches(tournament.group_matches, "Group Stage Matches")}
 
