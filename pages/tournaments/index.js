@@ -38,7 +38,11 @@ export default function TournamentsPage() {
         <h2 className="text-2xl font-bold mb-4">Tournaments</h2>
 
         {admin && <CreateTournamentForm onCreate={refreshTournaments} />}
-        <TournamentList tournaments={tournaments} onTournamentClick={(id) => router.push(`/tournaments/${id}`)} />
+        <TournamentList
+          tournaments={tournaments}
+          onTournamentClick={(id) => router.push(`/tournaments/${id}`)}
+          onDelete={refreshTournaments}
+        />
       </div>
     </div>
   );

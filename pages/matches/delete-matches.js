@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchMatches, deleteMatch } from "../../utils/api";
-import CustomNavbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { isAdmin } from "../../utils/auth";
 import { useRouter } from "next/router";
 
@@ -43,7 +43,7 @@ const DeleteMatches = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <CustomNavbar />
+      <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">🗑️ Delete Matches</h2>
 

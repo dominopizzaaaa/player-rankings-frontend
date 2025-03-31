@@ -1,110 +1,173 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
-import SubmitMatch from "./SubmitMatch";
-import Link from "next/link";
-import { isAdmin } from "../../utils/auth"; // ✅ Import auth check
-import { useRouter } from "next/router";
 
-const AddMatches = () => {
-  const [matches, setMatches] = useState([]);
-  const [players, setPlayers] = useState({}); // Store player names
-  const router = useRouter();
+const SubmitMatch = ({ refreshMatches }) => {
+  const [players, setPlayers] = useState([]);
+  const [player1, setPlayer1] = useState("");
+  const [player2, setPlayer2] = useState("");
+  const [player1Score, setPlayer1Score] = useState("");
+  const [player2Score, setPlayer2Score] = useState("");
+  const [winner, setWinner] = useState("");
 
-  useEffect(() => {
-    if (!isAdmin()) {
-      router.push("/"); // ✅ Redirect non-admin users to leaderboard
-    }
-  }, []);
-
-  // Fetch players and store them in an object {id: name}
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Players response:", data); // 👀
-  
-        if (!Array.isArray(data)) {
-          console.error("Expected array, got:", data);
-          return;
-        }
-  
-        const playerMap = {};
-        data.forEach((player) => {
-          playerMap[player.id] = player.name;
-        });
-        setPlayers(playerMap);
-      })
-      .catch((err) => console.error("Error fetching players:", err));
-  }, []);
-  
-  
-  const fetchMatches = () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`)
       .then((response) => response.json())
-      .then((data) => setMatches(data))
-      .catch((error) => console.error("Error fetching matches:", error));
-  };  
-
-  useEffect(() => {
-    fetchMatches();
+      .then((data) => setPlayers(data))
+      .catch((error) => console.error("Error fetching players:", error));
   }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!player1 || !player2 || !winner || player1 === player2) {
+      alert("Please select valid players and ensure Player 1 and Player 2 are different.");
+      return;
+    }
+
+    const matchData = {
+      player1_id: parseInt(player1),
+      player2_id: parseInt(player2),
+      player1_score: parseInt(player1Score),
+      player2_score: parseInt(player2Score),
+      winner_id: parseInt(winner),
+    };
+
+    console.log("Match data being sent:", JSON.stringify(matchData, null, 2)); // Debugging
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to submit a match.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Added token authentication
+        },
+        body: JSON.stringify(matchData),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          alert("Unauthorized! Please log in.");
+        } else {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return;
+      }
+
+      alert("Match submitted successfully!");
+      setPlayer1("");
+      setPlayer2("");
+      setPlayer1Score("");
+      setPlayer2Score("");
+      setWinner("");
+
+    } catch (error) {
+      console.error("Error submitting match:", error);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-4">Match History</h2>
-
-        {/* Match Submission Form */}
-        <SubmitMatch refreshMatches={fetchMatches} />
-
-        {/* Match History Table */}
-        <table className="w-full bg-white shadow-md rounded-lg mt-6">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="py-2 px-4">Player 1</th>
-              <th className="py-2 px-4">Player 2</th>
-              <th className="py-2 px-4">Winner</th>
-              <th className="py-2 px-4">Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {matches.map((match) => (
-              <tr key={match.id} className="border-b">
-                {/* Player 1 Name (ID) */}
-                <td className="py-2 px-4 text-center">
-                  <Link href={`/players/${match.player1_id}`} className="text-blue-600 hover:underline">
-                    {players[match.player1_id] || `Player ${match.player1_id}`} ({match.player1_id})
-                  </Link>
-                </td>
-
-                {/* Player 2 Name (ID) */}
-                <td className="py-2 px-4 text-center">
-                  <Link href={`/players/${match.player2_id}`} className="text-blue-600 hover:underline">
-                    {players[match.player2_id] || `Player ${match.player2_id}`} ({match.player2_id})
-                  </Link>
-                </td>
-
-                {/* Winner Name (ID) */}
-                <td className="py-2 px-4 text-center font-bold">
-                  {players[match.winner_id] 
-                    ? `${players[match.winner_id]} (${match.winner_id})` 
-                    : `Player ${match.winner_id} (${match.winner_id})`}
-                </td>
-
-
-                {/* Match Score */}
-                <td className="py-2 px-4 text-center">
-                  {match.player1_score} - {match.player2_score}
-                </td>
-              </tr>
-            ))}
-
-          </tbody>
-        </table>
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">➕ Add Match</h2>
+  
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6 border border-gray-200">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Player 1</label>
+            <select
+              value={player1}
+              onChange={(e) => setPlayer1(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Player 1</option>
+              {players.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+  
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Player 2</label>
+            <select
+              value={player2}
+              onChange={(e) => setPlayer2(e.target.value)}
+              disabled={!player1}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Player 2</option>
+              {players
+                .filter((p) => p.id !== parseInt(player1))
+                .map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+  
+          <div className="flex gap-4">
+            <div className="w-1/2">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Player 1 Score</label>
+              <input
+                type="number"
+                value={player1Score}
+                onChange={(e) => setPlayer1Score(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div className="w-1/2">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Player 2 Score</label>
+              <input
+                type="number"
+                value={player2Score}
+                onChange={(e) => setPlayer2Score(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+          </div>
+  
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Winner</label>
+            <select
+              value={winner}
+              onChange={(e) => setWinner(e.target.value)}
+              disabled={!player1 || !player2}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Winner</option>
+              {player1 && (
+                <option value={player1}>
+                  {players.find((p) => p.id == player1)?.name}
+                </option>
+              )}
+              {player2 && (
+                <option value={player2}>
+                  {players.find((p) => p.id == player2)?.name}
+                </option>
+              )}
+            </select>
+          </div>
+  
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold"
+          >
+            Submit Match
+          </button>
+        </form>
       </div>
     </div>
-  );
+  );  
 };
 
-export default AddMatches;
+export default SubmitMatch;
