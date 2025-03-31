@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import CustomNavbar from "../components/Navbar";
-import { Table, Container } from "react-bootstrap";
-import { useRouter } from "next/router"; // ✅ Add router
-
-const router = useRouter
 
 const Home = () => {
   const [players, setPlayers] = useState([]);
@@ -13,49 +9,86 @@ const Home = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((response) => response.json())
       .then((data) => {
-        const sortedPlayers = data.sort((a, b) => b.rating - a.rating);
-        setPlayers(sortedPlayers);
+        if (Array.isArray(data)) {
+          const sortedPlayers = data.sort((a, b) => b.rating - a.rating);
+          setPlayers(sortedPlayers);
+        } else {
+          console.error("Expected array but got:", data);
+        }
       })
       .catch((error) => console.error("Error fetching players:", error));
   }, []);
-  
+
+  const getRowClass = (index) => {
+    switch (index) {
+      case 0:
+        return "bg-yellow-100 animate-fade-in";
+      case 1:
+        return "bg-gray-100 animate-fade-in";
+      case 2:
+        return "bg-orange-100 animate-fade-in";
+      default:
+        return "animate-fade-in";
+    }
+  };
+
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <CustomNavbar />
-      <Container className="mt-4 d-flex justify-content-center">
-        <div className="text-center w-100">
-          <h2 className="mb-4">🏆 Player Leaderboard</h2>
-          <Table striped bordered hover className="mx-auto text-center" style={{ width: "60%" }}>
-            <thead className="bg-primary text-white">
+      <div className="max-w-4xl mx-auto px-4 py-10">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          🏆 Player Leaderboard
+        </h2>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm text-center border border-gray-300 rounded shadow">
+            <thead className="bg-blue-600 text-white">
               <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Player ID</th>
-                <th>Rating</th>
+                <th className="py-3 px-4">Rank</th>
+                <th className="py-3 px-4">Name</th>
+                <th className="py-3 px-4">Player ID</th>
+                <th className="py-3 px-4">Rating</th>
               </tr>
             </thead>
             <tbody>
               {players.map((player, index) => (
-                <tr key={player.id}>
-                  <td className="fw-bold">{index + 1}</td>
-                  <td>
-                  <Link href={`/players/${player.id}`} passHref legacyBehavior>
-                    <a
-                      className="text-decoration-none fw-bold"
-                      onClick={() => console.log("Navigating to:", `/players/${player.id}`)} // ✅ Debug log
-                    >
-                      {player.name}
-                    </a>
-                  </Link>
+                <tr
+                  key={player.id}
+                  className={`${getRowClass(index)} border-t border-gray-200 transition-all duration-300`}
+                >
+                  <td className="py-2 px-4 font-bold">{index + 1}</td>
+                  <td className="py-2 px-4">
+                    <Link href={`/players/${player.id}`}>
+                      <span className="text-blue-600 hover:underline cursor-pointer font-medium">
+                        {player.name}
+                      </span>
+                    </Link>
                   </td>
-                  <td>{player.id}</td>
-                  <td>{player.rating}</td>
+                  <td className="py-2 px-4">{player.id}</td>
+                  <td className="py-2 px-4">{player.rating}</td>
                 </tr>
               ))}
             </tbody>
-          </Table>
+          </table>
         </div>
-      </Container>
+      </div>
+
+      <style jsx global>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-5px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.4s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 };

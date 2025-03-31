@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import SubmitMatch from "../components/SubmitMatch";
+import Navbar from "../../components/Navbar";
+import SubmitMatch from "./SubmitMatch";
 import Link from "next/link";
-import { isAdmin } from "../utils/auth"; // ✅ Import auth check
+import { isAdmin } from "../../utils/auth"; // ✅ Import auth check
 import { useRouter } from "next/router";
 
-const Matches = () => {
+const AddMatches = () => {
   const [matches, setMatches] = useState([]);
   const [players, setPlayers] = useState({}); // Store player names
   const router = useRouter();
@@ -19,16 +19,24 @@ const Matches = () => {
   // Fetch players and store them in an object {id: name}
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => {
+        console.log("Players response:", data); // 👀
+  
+        if (!Array.isArray(data)) {
+          console.error("Expected array, got:", data);
+          return;
+        }
+  
         const playerMap = {};
         data.forEach((player) => {
           playerMap[player.id] = player.name;
         });
         setPlayers(playerMap);
       })
-      .catch((error) => console.error("Error fetching players:", error));
+      .catch((err) => console.error("Error fetching players:", err));
   }, []);
+  
   
   const fetchMatches = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`)
@@ -99,4 +107,4 @@ const Matches = () => {
   );
 };
 
-export default Matches;
+export default AddMatches;

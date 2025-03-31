@@ -90,7 +90,6 @@ export const deleteMatch = async (id) => {
   }
 };
 
-
 // ✅ Update a player (Admin only)
 export const updatePlayer = async (id, playerData) => {
   try {
@@ -127,6 +126,32 @@ export const updateMatch = async (id, matchData) => {
   }
 };
 
+export async function getTournaments() {
+  const res = await fetch(`${API_BASE}/tournaments`);
+  return res.json();
+}
+
+export const createTournament = async (tournamentData) => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,  // Only if your route is admin-protected
+    },
+    body: JSON.stringify(tournamentData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.error("Tournament creation error:", error);
+    throw new Error(JSON.stringify(error));
+  }
+
+  return await response.json();
+};
+
 // ✅ Login user and store token
 export const loginUser = async (credentials) => {
   try {
@@ -151,3 +176,28 @@ export const loginUser = async (credentials) => {
 export const logoutUser = () => {
   localStorage.removeItem("token");
 };
+
+// ✅ Fetch tournament details
+export async function getTournamentDetails(id) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/details`);
+  if (!res.ok) throw new Error("Failed to fetch tournament details");
+  return await res.json();
+}
+
+// ✅ Submit a match result
+export async function submitMatchResult(matchId, result) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(result),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.detail || "Failed to submit match result");
+  }
+
+  return await res.json();
+}
