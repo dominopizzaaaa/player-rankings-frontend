@@ -1,95 +1,82 @@
+
 # Player Rankings Frontend
 
-## Overview
-
-The frontend of the Player Rankings system is developed using **Next.js** (React framework) and **Tailwind CSS**. It provides an interactive UI for managing players, matches, and rankings. The frontend communicates with a **FastAPI backend** to fetch, update, and submit data.
-
-## Technologies Used
-
-- **Next.js** (React framework) – for SSR (Server-Side Rendering) and CSR (Client-Side Rendering)
-- **React Hooks** (useState, useEffect, useContext) – for state management
-- **Tailwind CSS** – for styling
-- **React Bootstrap** – for UI components
-- **Fetch API / REST API Calls** – for communication with the backend
-- **Local Storage** – for storing authentication tokens
-
-## Hosting & Deployment
-
-The frontend is deployed on **Vercel** for seamless hosting, CI/CD, and automatic updates. The deployment workflow is set up to track changes in the main branch of the repository, ensuring the latest features are always live.
+This is the frontend interface for the Player Rankings System, built using Next.js and styled with Tailwind CSS.
 
 ## Features
 
-### 🏆 Player Leaderboard
-- Displays the ranking of players based on Elo rating.
-- Players are sorted dynamically based on their performance.
-- Clicking a player's name navigates to their profile.
+- 🔐 Login/Logout with token-based local auth
+- 📈 Leaderboard view
+- 🎾 Match Management (Add, Edit, Delete Matches)
+- 👥 Player Management (Add, Edit, Delete Players)
+- 🏆 Tournament Management:
+  - Tournament list and detail views
+  - Tournament creation UI with grouped player selection
+  - Group stage match result submission
+  - Live group standings
+  - Full knockout bracket visualization
+  - 3rd place match display
+  - Final standings display
+  - Admin-only controls
 
-### 🔄 Authentication & Admin Privileges
-- Only admins can **add, edit, and delete players and matches**.
-- Uses **JWT authentication** for login sessions.
-- Token is stored in **localStorage** and used in API requests for authorization.
+---
 
-### 🎮 Match Submission
-- Allows submitting match results, updating **Elo ratings**.
-- Validates player selection to prevent duplicate entries.
+## 🧠 Tournament System UI
 
-### 🏓 Player Management
-- **Add Players**: Create a new player with name, handedness, rubbers, blade, and rating.
-- **Edit Players**: Modify player details (only available for admins).
-- **Delete Players**: Remove a player and their match history.
+### 1. Tournament List
 
-### 📝 Match Management
-- **Edit Matches**: Modify match details, including scores and winners.
-- **Delete Matches**: Remove matches from history.
+Accessible at `/tournaments`. Displays all tournaments.
 
-### 🔀 API Integration
-- Fetches player and match data dynamically from the backend.
-- Uses **fetch API** with authentication headers.
+### 2. Tournament Creation
 
-## Methods & API Calls
+Accessible to admins. Inputs:
+- Tournament name
+- Date
+- Number of groups
+- Players per group advancing
+- Player checklist to select participants
 
-### Authentication
-- **Login API**: `POST /token` (sends username and password to get a JWT token)
-- **Logout**: Clears the localStorage token.
+System auto-generates group matchups and knockout bracket.
 
-### Player APIs
-- **GET /players** → Fetch all players
-- **POST /players** → Add new player
-- **PATCH /players/{id}** → Update player details
-- **DELETE /players/{id}** → Delete a player
+---
 
-### Match APIs
-- **GET /matches** → Fetch all matches
-- **POST /matches** → Submit a match result
-- **PATCH /matches/{id}** → Update match details
-- **DELETE /matches/{id}** → Delete a match
+### 3. Group Stage UI
 
-## Deployment Steps
+- Displays players divided into groups
+- Each group has a match table
+- Admin inputs winner, scores, and per-set details
+- Rankings auto-update and show:
+  - Wins
+  - Head-to-head
+  - Set and point difference
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-repo/player-rankings-frontend.git
-   ```
+---
 
-2. Install dependencies:
-   ```sh
-   cd player-rankings-frontend
-   npm install
-   ```
+### 4. Knockout Stage UI
 
-3. Create `.env.local` with backend API URL:
-   ```sh
-   NEXT_PUBLIC_BACKEND_URL=https://your-backend-url.com
-   ```
+- Visual bracket using all pre-generated matches
+- Each round shown with match slots and scores
+- Final and 3rd place matches rendered clearly
+- Rankings locked in after finals
 
-4. Run the development server:
-   ```sh
-   npm run dev
-   ```
+---
 
-5. Deploy to **Vercel**:
-   ```sh
-   vercel
-   ```
+### 5. Navigation
 
-This frontend provides a **fast, responsive, and secure** experience for managing Elo rankings. 🚀
+Navbar updated with:
+- `/matches/add-matches`, `/matches/delete-matches`, `/matches/edit-matches`
+- `/players/add-players`, `/players/delete-players`, `/players/edit-players`
+- `/tournaments` — tournament list
+
+All pages check for local auth token to guard admin-only actions.
+
+---
+
+## Dev Setup
+
+```bash
+npm install
+npm run dev
+```
+
+Make sure backend is running and CORS is configured properly.
