@@ -131,6 +131,23 @@ export default function TournamentDetailsPage() {
         <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
           Tournament: {tournament.name}
         </h2>
+        {admin && (
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200"
+            onClick={async () => {
+              if (confirm("Are you sure you want to reset this tournament? This will delete all matches.")) {
+                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${tournament.id}/reset`, {
+                  method: "POST"
+                });
+                alert("Tournament has been reset. You can now regenerate matches.");
+                location.reload();
+              }
+            }}
+          >
+            Reset Tournament
+          </button>
+        )}
+
 
         {renderMatches(tournament.group_matches, "Group Stage Matches")}
 
