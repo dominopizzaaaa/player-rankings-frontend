@@ -7,6 +7,7 @@ import TournamentMatchForm from "./TournamentDetails/TournamentMatchForm";
 import TournamentMatchResultDisplay from "./TournamentDetails/TournamentMatchResultDisplay";
 import GroupMatrixTable from "./TournamentDetails/GroupMatrixTable";
 import KnockoutBracket from "./TournamentDetails/KnockoutBracket";
+import FinalStandings from "./TournamentDetails/FinalStandings";
 
 export default function TournamentDetailsPage() {
   const router = useRouter();
@@ -19,19 +20,17 @@ export default function TournamentDetailsPage() {
 
   useEffect(() => {
     if (!id) return;
-  
+
     const loadData = async () => {
-      // 1. Fetch players first
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`);
       const data = await res.json();
       const map = {};
       data.forEach((p) => (map[p.id] = p.name));
       setPlayerNames(map);
-  
-      // 2. Only THEN fetch tournament
+
       const tournamentData = await getTournamentDetails(id);
       setTournament(tournamentData);
-  
+
       const initialSetCounts = {};
       [...tournamentData.group_matches, ...tournamentData.knockout_matches, ...tournamentData.individual_matches].forEach(
         (match) => {
@@ -40,10 +39,10 @@ export default function TournamentDetailsPage() {
       );
       setSetCounts(initialSetCounts);
     };
-  
+
     loadData();
     if (isAdmin()) setAdmin(true);
-  }, [id]);  
+  }, [id]);
 
   const fetchTournamentDetails = async () => {
     const data = await getTournamentDetails(id);
@@ -61,7 +60,6 @@ export default function TournamentDetailsPage() {
     const form = document.getElementById(`match-form-${match.id}`);
     const winnerId = parseInt(form.winner_id.value);
 
-    // ✅ NEW: Extract point scores
     const player1_score = parseInt(form.player1_score.value);
     const player2_score = parseInt(form.player2_score.value);
 
@@ -78,32 +76,34 @@ export default function TournamentDetailsPage() {
         player2_score: parseInt(p2Input.value),
       });
       index++;
-  }
+    }
 
-  await submitMatchResult(match.id, {
-    player1_id: match.player1_id,
-    player2_id: match.player2_id,
-    winner_id: winnerId,
-    player1_score,     // ✅ required by backend
-    player2_score,     // ✅ required by backend
-    sets,
-  });
+    await submitMatchResult(match.id, {
+      player1_id: match.player1_id,
+      player2_id: match.player2_id,
+      winner_id: winnerId,
+      player1_score,
+      player2_score,
+      sets,
+    });
 
-  fetchTournamentDetails();
+    fetchTournamentDetails();
   };
 
   const getPlayerName = (playerId) => {
     if (!playerId) return "TBD";
     return playerNames[playerId] || `Player #${playerId}`;
-  };  
+  };
 
-  const renderMatches = (matches, stage) => (
-    <div className="mb-6">
-      <h3 className="text-xl font-semibold mb-2">{stage}</h3>
-      <div className="space-y-2">
+  const renderMatches = (matches, title) => (
+    <div className="mb-10">
+      <h3 className="text-2xl font-semibold mb-3 text-gray-800">{title}</h3>
+      <div className="grid gap-4">
         {matches.map((match) => (
-          <div key={match.id} className="bg-white p-3 rounded shadow">
-            <p>{playerNames[match.player1_id]} vs {playerNames[match.player2_id]}</p>
+          <div key={match.id} className="bg-white p-4 rounded shadow border">
+            <p className="mb-2 font-medium text-gray-700">
+              {getPlayerName(match.player1_id)} vs {getPlayerName(match.player2_id)}
+            </p>
 
             {admin && match.winner_id === null ? (
               <TournamentMatchForm
@@ -114,10 +114,7 @@ export default function TournamentDetailsPage() {
                 onSubmit={handleScoreSubmit}
               />
             ) : (
-              <TournamentMatchResultDisplay
-                match={match}
-                playerNames={playerNames}
-              />
+              <TournamentMatchResultDisplay match={match} playerNames={playerNames} />
             )}
           </div>
         ))}
@@ -125,35 +122,39 @@ export default function TournamentDetailsPage() {
     </div>
   );
 
-  if (!tournament) return <div>Loading...</div>;
+  if (!tournament) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <CustomNavbar />
-      <div className="container mx-auto p-4">
-        <h2 className="text-2xl font-bold mb-6">Tournament: {tournament.name}</h2>
+      <div className="max-w-5xl mx-auto p-4">
+        <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
+          Tournament: {tournament.name}
+        </h2>
+
         {renderMatches(tournament.group_matches, "Group Stage Matches")}
-        {tournament?.group_matrix && (
-          <GroupMatrixTable groupMatrix={tournament.group_matrix} playerNames={playerNames} />
+
+        {tournament.group_matrix && (
+          <GroupMatrixTable
+            groupMatrix={tournament.group_matrix}
+            playerNames={playerNames}
+          />
         )}
+
         {renderMatches(tournament.knockout_matches, "Knockout Stage Matches")}
-        {tournament?.knockout_bracket && (
-          <KnockoutBracket bracket={tournament.knockout_bracket} playerNames={playerNames} />
+
+        {tournament.knockout_bracket && (
+          <KnockoutBracket
+            bracket={tournament.knockout_bracket}
+            playerNames={playerNames}
+          />
         )}
+
         {tournament.final_standings && (
-          <div className="mt-4">
-            <h2 className="text-xl font-semibold">Final Standings</h2>
-            <ul>
-              <li>🥇 1st: {getPlayerName(tournament.final_standings["1"])}</li>
-              <li>🥈 2nd: {getPlayerName(tournament.final_standings["2"])}</li>
-              {tournament.final_standings["3"] && (
-                <li>🥉 3rd: {getPlayerName(tournament.final_standings["3"])}</li>
-              )}
-              {tournament.final_standings["4"] && (
-                <li>4th: {getPlayerName(tournament.final_standings["4"])}</li>
-              )}
-            </ul>
-          </div>
+          <FinalStandings
+            standings={tournament.final_standings}
+            getPlayerName={getPlayerName}
+          />
         )}
       </div>
     </div>

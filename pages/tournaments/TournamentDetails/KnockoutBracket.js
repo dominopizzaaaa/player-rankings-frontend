@@ -4,11 +4,11 @@ export default function KnockoutBracket({ bracket, playerNames }) {
   if (!bracket || Object.keys(bracket).length === 0) return null;
 
   const getSize = (label) => {
-    if (label === "3rd Place Match") return -1;
-    if (label === "Final" || label === "Round of 2") return 2;
-    const match = label.match(/\d+/);
-    return match ? parseInt(match[0]) : 0;
-  };
+    if (label === "Final") return 1;
+    if (label === "3rd Place Match") return 2; // Final before 3rd
+    const match = label.match(/\d+/); // Match "Round of 4", "Round of 8"
+    return match ? parseInt(match[0]) + 10 : 1000; // higher number = earlier round
+  };  
 
   const rounds = Object.keys(bracket).sort((a, b) => getSize(a) - getSize(b));
 
@@ -29,7 +29,11 @@ export default function KnockoutBracket({ bracket, playerNames }) {
           return (
             <div key={round}>
               <h4 className={`text-center font-semibold mb-2 ${active ? "text-blue-600" : ""}`}>
-                {round}
+                {round === "Final" ? "🏆 Final" :
+                round === "Round of 2" ? "🥉 3rd Place Match" :
+                round === "Round of 4" ? "Semi Finals" :
+                round === "Round of 8" ? "Quarter Finals" :
+                round}
               </h4>
               <div className="space-y-4">
                 {matches.map((match) => {
@@ -50,11 +54,7 @@ export default function KnockoutBracket({ bracket, playerNames }) {
                           : "bg-gray-100 border-gray-300"
                       }`}
                     >
-                      {label && (
-                        <div className="text-xs font-semibold text-center text-gray-700 mb-1">
-                          {label}
-                        </div>
-                      )}
+
                       <div className="font-medium">
                         {playerNames[match.player1_id] || "TBD"} vs{" "}
                         {playerNames[match.player2_id] || "TBD"}
