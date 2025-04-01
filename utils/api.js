@@ -136,10 +136,7 @@ export const createTournament = async (tournamentData) => {
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,  // Only if your route is admin-protected
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(tournamentData),
   });
 
@@ -188,9 +185,7 @@ export async function getTournamentDetails(id) {
 export async function submitMatchResult(matchId, result) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(result),
   });
 
