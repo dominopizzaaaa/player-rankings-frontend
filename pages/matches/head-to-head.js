@@ -126,9 +126,9 @@ export default function HeadToHeadPage() {
                       <td className="p-2">
                         {m.set_scores?.length > 0
                           ? m.set_scores.map((s, j) => (
-                              <span key={j}>
-                                ({s.p1}-{s.p2}){j < m.set_scores.length - 1 ? ", " : ""}
-                              </span>
+                            <span key={j}>
+                              ({s.player1_score}-{s.player2_score}){j < m.set_scores.length - 1 ? ", " : ""}
+                            </span>
                             ))
                           : "None"}
                       </td>
