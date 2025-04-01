@@ -235,7 +235,7 @@ const SubmitMatch = () => {
 
             return (
               <div key={m.id} className="bg-white border border-gray-200 rounded shadow p-4 text-sm">
-                <span className="block text-gray-500 mb-1">{matchDate}</span> {/* ⏱️ Match Date */}
+                <span className="block text-gray-500 mb-1">{matchDate}</span>
                 <span className="font-semibold">{m.player1}</span> vs{" "}
                 <span className="font-semibold">{m.player2}</span>{" "}
                 <span className="text-gray-500">
