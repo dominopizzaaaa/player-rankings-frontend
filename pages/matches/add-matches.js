@@ -10,7 +10,6 @@ const SubmitMatch = () => {
   const [matches, setMatches] = useState([]);
   const [timestamp, setTimestamp] = useState("");
 
-
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
       .then((res) => res.json())
@@ -21,9 +20,12 @@ const SubmitMatch = () => {
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`)
       .then((res) => res.json())
-      .then((data) => setMatches(data))
+      .then((data) => {
+        const sorted = [...data].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        setMatches(sorted);
+      })
       .catch((err) => console.error("Error fetching matches:", err));
-  }, []);
+  }, []);  
 
   const handleAddSet = () => {
     setSetScores([...setScores, { p1: "", p2: "" }]);
@@ -216,26 +218,35 @@ const SubmitMatch = () => {
         <div className="mt-12">
           <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">📜 Recent Matches</h3>
           <div className="space-y-4">
-            {matches.map((m) => {
-              const winner = m.winner_id === m.player1_id ? m.player1 : m.player2;
-              const setString =
-                m.set_scores && m.set_scores.length > 0
-                  ? m.set_scores.map((s) => `${s.player1_score}:${s.player2_score}`).join(", ")
-                  : null;
+          {matches.map((m) => {
+            const winner = m.winner_id === m.player1_id ? m.player1 : m.player2;
+            const setString =
+              m.set_scores && m.set_scores.length > 0
+                ? m.set_scores.map((s) => `${s.player1_score}:${s.player2_score}`).join(", ")
+                : null;
 
-              return (
-                <div key={m.id} className="bg-white border border-gray-200 rounded shadow p-4 text-sm">
-                  <span className="font-semibold">{m.player1}</span> vs{" "}
-                  <span className="font-semibold">{m.player2}</span>{" "}
-                  <span className="text-gray-500">
-                    ({m.player1_score}:{m.player2_score}
-                    {setString && `) (${setString}`}
-                    )
-                  </span>{" "}
-                  <span className="text-green-600 font-medium">Winner: {winner}</span>
-                </div>
-              );
-            })}
+            const matchDate = new Date(m.timestamp).toLocaleString(undefined, {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            return (
+              <div key={m.id} className="bg-white border border-gray-200 rounded shadow p-4 text-sm">
+                <span className="block text-gray-500 mb-1">{matchDate}</span> {/* ⏱️ Match Date */}
+                <span className="font-semibold">{m.player1}</span> vs{" "}
+                <span className="font-semibold">{m.player2}</span>{" "}
+                <span className="text-gray-500">
+                  ({m.player1_score}:{m.player2_score}
+                  {setString && `) (${setString}`}
+                  )
+                </span>{" "}
+                <span className="text-green-600 font-medium">Winner: {winner}</span>
+              </div>
+            );
+          })}
           </div>
         </div>
       </div>
