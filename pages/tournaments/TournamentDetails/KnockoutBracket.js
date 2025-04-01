@@ -56,8 +56,8 @@ export default function KnockoutBracket({ bracket, playerNames }) {
                     >
 
                       <div className="font-medium">
-                        {playerNames[match.player1_id] || "TBD"} vs{" "}
-                        {playerNames[match.player2_id] || "TBD"}
+                        {playerNames[match.player1_id] || "BYE"} vs{" "}
+                        {playerNames[match.player2_id] || "BYE"}
                       </div>
                       <div className="text-sm text-gray-600">
                         {match.player1_score ?? "-"} : {match.player2_score ?? "-"}

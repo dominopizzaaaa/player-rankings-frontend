@@ -116,7 +116,7 @@ export default function HeadToHeadPage() {
                       <td className="p-2">
                         {m.date ? new Date(m.date).toLocaleDateString() : "—"}
                       </td>
-                      <td className="p-2">{m.tournament ? "✅" : "—"}</td>
+                      <td className="p-2">{m.tournament ? m.tournament_name || "Tournament" : "—"}</td>
                       <td className="p-2">{playerNames[m.winner_id] || "—"}</td>
                       <td className="p-2">
                         {m.player1_id && m.player2_id

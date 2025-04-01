@@ -196,3 +196,18 @@ export async function submitMatchResult(matchId, result) {
 
   return await res.json();
 }
+
+export const resetTournament = async (tournamentId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/reset`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) throw new Error(`Failed to reset tournament: ${response.statusText}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error resetting tournament:", error);
+    return null;
+  }
+};

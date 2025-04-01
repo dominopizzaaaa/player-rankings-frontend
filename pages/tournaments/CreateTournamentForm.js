@@ -46,7 +46,19 @@ const CreateTournamentForm = ({ onCreated }) => {
 
     try {
       const data = await createTournament(tournamentData);
-      console.log("Tournament created!", data);
+      alert("✅ Tournament created successfully!");
+      if (onCreated) onCreated(); // Notify parent
+      
+      // Optionally reset form
+      setName("");
+      setDate("");
+      setNumGroups(0);
+      setPlayersPerGroupAdvancing(1);
+      setSelectedPlayers({});
+      
+      // Reload page to reflect new tournament
+      window.location.reload();
+      
       if (onCreated) onCreated(); // Notify parent
     } catch (err) {
       console.error("Error creating tournament:", err);
