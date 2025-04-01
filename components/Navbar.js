@@ -54,6 +54,10 @@ export default function CustomNavbar() {
                 <Link href="/matches/edit-matches" className="hover:text-yellow-300">
                   Edit Matches
                 </Link>
+                <Link href="/matches/head-to-head" className="hover:text-yellow-300">
+                  Head to Head
+                </Link>
+
                 <button
                   onClick={handleLogout}
                   className="text-red-400 hover:text-red-600"
