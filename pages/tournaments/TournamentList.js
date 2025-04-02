@@ -54,7 +54,6 @@ const TournamentList = ({ tournaments, onDelete }) => {
       const id = finalStandings[pos] || finalStandings[parseInt(pos)];
       return id ? playerNames[id] || `Player #${id}` : null;
     };
-    
 
     return {
       first: getName("1"),
@@ -66,9 +65,6 @@ const TournamentList = ({ tournaments, onDelete }) => {
   return (
     <div className="grid gap-4">
       {tournaments.map((tournament) => {
-        console.log("🎯 Tournament:", tournament);
-        console.log("🏁 Final standings:", tournament.final_standings);
-        
         const winners = extractWinners(tournament.final_standings);
 
         return (
