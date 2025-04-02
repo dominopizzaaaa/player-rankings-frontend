@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { isAdmin } from "../../utils/auth";
+import { isAdmin } from "../utils/auth";
 
 const TournamentList = ({ tournaments, onDelete }) => {
   const [admin, setAdmin] = useState(false);
