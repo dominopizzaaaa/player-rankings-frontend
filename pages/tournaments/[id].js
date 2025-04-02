@@ -7,11 +7,11 @@ import {
   submitMatchResult,
   resetTournament,
 } from "../../utils/api";
-import TournamentMatchForm from "./TournamentDetails/TournamentMatchForm";
-import TournamentMatchResultDisplay from "./TournamentDetails/TournamentMatchResultDisplay";
-import GroupMatrixTable from "./TournamentDetails/GroupMatrixTable";
-import KnockoutBracket from "./TournamentDetails/KnockoutBracket";
-import FinalStandings from "./TournamentDetails/FinalStandings";
+import TournamentMatchForm from "../../components/TournamentDetails/TournamentMatchForm";
+import TournamentMatchResultDisplay from "../../components/TournamentDetails/TournamentMatchResultDisplay";
+import GroupMatrixTable from "../../components/TournamentDetails/GroupMatrixTable";
+import KnockoutBracket from "../../components/TournamentDetails/KnockoutBracket";
+import FinalStandings from "../../components/TournamentDetails/FinalStandings";
 
 export default function TournamentDetailsPage() {
   const router = useRouter();
