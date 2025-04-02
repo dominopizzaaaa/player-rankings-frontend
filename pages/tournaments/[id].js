@@ -22,6 +22,10 @@ export default function TournamentDetailsPage() {
   const [playerNames, setPlayerNames] = useState({});
   const [setCounts, setSetCounts] = useState({});
 
+  // Toggle states
+  const [showGroupMatches, setShowGroupMatches] = useState(true);
+  const [showKnockoutMatches, setShowKnockoutMatches] = useState(true);
+
   useEffect(() => {
     if (!id) return;
 
@@ -135,17 +139,36 @@ export default function TournamentDetailsPage() {
           </div>
         )}
 
-        {renderMatches(tournament.group_matches, "Group Stage Matches")}
+        {/* Toggle Group Matches */}
+        <div className="mb-6">
+          <button
+            onClick={() => setShowGroupMatches(!showGroupMatches)}
+            className="mb-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
+          >
+            {showGroupMatches ? "Hide" : "Show"} Group Stage Matches
+          </button>
+          {showGroupMatches && renderMatches(tournament.group_matches, "Group Stage Matches")}
+        </div>
 
         {tournament.group_matrix && (
           <GroupMatrixTable groupMatrix={tournament.group_matrix} playerNames={playerNames} />
         )}
 
-        {renderMatches(tournament.knockout_matches, "Knockout Stage Matches")}
+        {/* Toggle Knockout Matches */}
+        <div className="mb-6">
+          <button
+            onClick={() => setShowKnockoutMatches(!showKnockoutMatches)}
+            className="mb-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded"
+          >
+            {showKnockoutMatches ? "Hide" : "Show"} Knockout Stage Matches
+          </button>
+          {showKnockoutMatches && renderMatches(tournament.knockout_matches, "Knockout Stage Matches")}
+        </div>
 
         {tournament.knockout_bracket && (
           <KnockoutBracket bracket={tournament.knockout_bracket} playerNames={playerNames} />
         )}
+
         {admin && (
           <div className="flex justify-end mb-4">
             <button

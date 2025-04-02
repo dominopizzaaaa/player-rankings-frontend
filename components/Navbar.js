@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export default function CustomNavbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [mounted, setMounted] = useState(false); // ⬅️ track client-side render
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -24,21 +24,25 @@ export default function CustomNavbar() {
           🏓 Elo Rankings
         </Link>
 
-        {/* Links container */}
         {mounted && (
           <div className="flex overflow-x-auto whitespace-nowrap gap-6 text-sm font-medium ml-8">
+            {/* Always visible to everyone */}
             <Link href="/" className="hover:text-yellow-300">
               Leaderboard
             </Link>
+            <Link href="/matches/add-matches" className="hover:text-yellow-300">
+              Matches
+            </Link>
+            <Link href="/tournaments" className="hover:text-yellow-300">
+              Tournaments
+            </Link>
+            <Link href="/matches/head-to-head" className="hover:text-yellow-300">
+              Head to Head
+            </Link>
 
-            {isAuthenticated ? (
+            {/* Admin-only links */}
+            {isAuthenticated && (
               <>
-                <Link href="/matches/add-matches" className="hover:text-yellow-300">
-                  Matches
-                </Link>
-                <Link href="/tournaments" className="hover:text-yellow-300">
-                  Tournaments
-                </Link>
                 <Link href="/players/add-players" className="hover:text-yellow-300">
                   Add Player
                 </Link>
@@ -54,9 +58,6 @@ export default function CustomNavbar() {
                 <Link href="/matches/edit-matches" className="hover:text-yellow-300">
                   Edit Matches
                 </Link>
-                <Link href="/matches/head-to-head" className="hover:text-yellow-300">
-                  Head to Head
-                </Link>
 
                 <button
                   onClick={handleLogout}
@@ -65,7 +66,10 @@ export default function CustomNavbar() {
                   Logout
                 </button>
               </>
-            ) : (
+            )}
+
+            {/* Only show login when not authenticated */}
+            {!isAuthenticated && (
               <Link href="/login" className="hover:text-yellow-300">
                 Login
               </Link>

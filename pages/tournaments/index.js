@@ -11,11 +11,7 @@ export default function TournamentsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAdmin()) {
-      router.push("/");  // Redirect to home if not admin
-    } else {
-      setAdmin(true);
-    }
+    setAdmin(isAdmin());
   }, []);
 
   useEffect(() => {
@@ -37,7 +33,7 @@ export default function TournamentsPage() {
       <div className="container mx-auto p-4">
         <h2 className="text-2xl font-bold mb-4">Tournaments</h2>
 
-        {admin && <CreateTournamentForm onCreate={refreshTournaments} />}
+        {admin && <CreateTournamentForm onCreated={refreshTournaments} />}
         <TournamentList
           tournaments={tournaments}
           onTournamentClick={(id) => router.push(`/tournaments/${id}`)}
