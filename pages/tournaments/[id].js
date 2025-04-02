@@ -23,8 +23,8 @@ export default function TournamentDetailsPage() {
   const [setCounts, setSetCounts] = useState({});
 
   // Toggle states
-  const [showGroupMatches, setShowGroupMatches] = useState(true);
-  const [showKnockoutMatches, setShowKnockoutMatches] = useState(true);
+  const [showGroupMatches, setShowGroupMatches] = useState(false);
+  const [showKnockoutMatches, setShowKnockoutMatches] = useState(false);
 
   useEffect(() => {
     if (!id) return;
