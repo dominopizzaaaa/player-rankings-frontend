@@ -1,5 +1,7 @@
 // Base URL for API requests
 // const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
+
+console.log("🔍 Backend URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // ✅ Helper function to get auth token
