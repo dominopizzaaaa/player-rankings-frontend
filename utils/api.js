@@ -211,3 +211,25 @@ export const resetTournament = async (tournamentId) => {
     return null;
   }
 };
+
+// ✅ Create a customized tournament (Admin only)
+export const createCustomTournament = async (customTournamentData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/tournaments/custom`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(customTournamentData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Custom tournament creation error:", error);
+      throw new Error(JSON.stringify(error));
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating custom tournament:", error);
+    throw error;
+  }
+};
