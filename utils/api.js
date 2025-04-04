@@ -3,6 +3,7 @@
 
 console.log("🔍 Backend URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+console.log("🔍 BASE_URL", BASE_URL);
 
 // ✅ Helper function to get auth token
 const getAuthHeaders = () => {
