@@ -64,49 +64,54 @@ const TournamentList = ({ tournaments, onDelete }) => {
 
   return (
     <div className="grid gap-4">
-      {tournaments.map((tournament) => {
-        const winners = extractWinners(tournament.final_standings);
-
-        return (
-          <div
-            key={tournament.id}
-            className="bg-white p-4 rounded shadow flex justify-between items-start"
-          >
-            <div>
-              <h3 className="text-lg font-bold">{tournament.name}</h3>
-              <p className="text-sm text-gray-600">Date: {tournament.date}</p>
-
-              {winners?.first && winners?.second ? (
-                <div className="mt-2 text-sm text-gray-700">
-                  🥇 1st: {winners.first} <br />
-                  🥈 2nd: {winners.second} <br />
-                  {winners.third && <>🥉 3rd: {winners.third}</>}
-                </div>
-              ) : (
-                <p className="mt-2 text-sm text-yellow-700 font-medium">⏳ In Progress</p>
+      {Array.isArray(tournaments) && tournaments.length > 0 ? (
+        tournaments.map((tournament) => {
+          const winners = extractWinners(tournament.final_standings);
+  
+          return (
+            <div
+              key={tournament.id}
+              className="bg-white p-4 rounded shadow flex justify-between items-start"
+            >
+              <div>
+                <h3 className="text-lg font-bold">{tournament.name}</h3>
+                <p className="text-sm text-gray-600">Date: {tournament.date}</p>
+  
+                {winners?.first && winners?.second ? (
+                  <div className="mt-2 text-sm text-gray-700">
+                    🥇 1st: {winners.first} <br />
+                    🥈 2nd: {winners.second} <br />
+                    {winners.third && <>🥉 3rd: {winners.third}</>}
+                  </div>
+                ) : (
+                  <p className="mt-2 text-sm text-yellow-700 font-medium">⏳ In Progress</p>
+                )}
+  
+                <Link
+                  href={`/tournaments/${tournament.id}`}
+                  className="text-blue-600 hover:underline mt-2 inline-block"
+                >
+                  View Details
+                </Link>
+              </div>
+  
+              {admin && (
+                <button
+                  onClick={() => handleDelete(tournament.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-sm"
+                >
+                  Delete
+                </button>
               )}
-
-              <Link
-                href={`/tournaments/${tournament.id}`}
-                className="text-blue-600 hover:underline mt-2 inline-block"
-              >
-                View Details
-              </Link>
             </div>
-
-            {admin && (
-              <button
-                onClick={() => handleDelete(tournament.id)}
-                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-sm"
-              >
-                Delete
-              </button>
-            )}
-          </div>
-        );
-      })}
+          );
+        })
+      ) : (
+        <p className="text-gray-500">No tournaments available.</p>
+      )}
     </div>
   );
+  
 };
 
 export default TournamentList;
