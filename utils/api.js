@@ -127,14 +127,14 @@ export const updateMatch = async (id, matchData) => {
 };
 
 export async function getTournaments() {
-  const res = await fetch(`${API_BASE}/tournaments`);
+  const res = await fetch(`${BASE_URL}/tournaments`);
   return res.json();
 }
 
 export const createTournament = async (tournamentData) => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`, {
+  const response = await fetch(`${BASE_URL}/tournaments`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(tournamentData),
