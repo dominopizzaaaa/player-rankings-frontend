@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
+import { fetchPlayers, fetchMatches } from "../../utils/api";
 
 const PlayerProfile = () => {
   const router = useRouter();
@@ -12,43 +13,30 @@ const PlayerProfile = () => {
   useEffect(() => {
     if (!id) return;
   
-    // Fetch all players to create a name-ID mapping
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched players:", data); // Debugging
+    const loadData = async () => {
+      try {
+        const players = await fetchPlayers();
         const map = {};
-        data.forEach((p) => {
-          map[p.id] = `${p.name} (${p.id})`; // Store formatted name (id)
+        players.forEach((p) => {
+          map[p.id] = `${p.name} (${p.id})`;
         });
         setPlayersMap(map);
-        console.log("Players map:", map); // Debugging
-      })
-      .catch((error) => console.error("Error fetching players:", error));
   
-    // Fetch player details
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched player details:", data); // Debugging
-        setPlayer(data);
-      })
-      .catch((error) => console.error("Error fetching player:", error));
+        const playerData = players.find((p) => p.id == id);
+        if (playerData) setPlayer(playerData);
   
-
-    // Fetch matches for this player
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched matches:", data); // Debugging
-        const playerMatches = data.filter(
+        const allMatches = await fetchMatches();
+        const playerMatches = allMatches.filter(
           (match) => match.player1_id == id || match.player2_id == id
         );
-        console.log("Filtered matches for player:", playerMatches); // Debugging
         setMatches(playerMatches);
-      })
-      .catch((error) => console.error("Error fetching matches:", error));
-  }, [id]);
+      } catch (err) {
+        console.error("Error loading player profile:", err);
+      }
+    };
+  
+    loadData();
+  }, [id]);  
   
 
   if (!player) return <div>Loading...</div>;

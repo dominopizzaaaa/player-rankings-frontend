@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createTournament } from "../../utils/api";
+import { fetchPlayers, createTournament } from "../../utils/api";
 
 const CreateTournamentForm = ({ onCreated }) => {
   const [name, setName] = useState("");
@@ -10,17 +10,20 @@ const CreateTournamentForm = ({ onCreated }) => {
   const [selectedPlayers, setSelectedPlayers] = useState({});
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then((res) => res.json())
-      .then((data) => {
+    const loadPlayers = async () => {
+      try {
+        const data = await fetchPlayers();
         if (Array.isArray(data)) {
           setPlayers(data);
         } else {
           console.error("Expected array of players, got:", data);
         }
-      })
-      .catch((err) => console.error("Failed to fetch players:", err));
-  }, []);
+      } catch (err) {
+        console.error("Failed to fetch players:", err);
+      }
+    };
+    loadPlayers();
+  }, []);  
 
   const handleCheckboxChange = (id) => {
     setSelectedPlayers((prev) => ({
