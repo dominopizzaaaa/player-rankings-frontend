@@ -16,7 +16,7 @@ const getAuthHeaders = () => {
 // ✅ Fetch all players
 export const fetchPlayers = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/players`);
+    const response = await fetch(`${BASE_URL}/players/`);
     if (!response.ok) throw new Error(`Failed to fetch players: ${response.statusText}`);
     return await response.json();
   } catch (error) {
@@ -28,7 +28,7 @@ export const fetchPlayers = async () => {
 // ✅ Fetch all matches
 export const fetchMatches = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/matches`);
+    const response = await fetch(`${BASE_URL}/matches/`);
     if (!response.ok) throw new Error(`Failed to fetch matches: ${response.statusText}`);
     return await response.json();
   } catch (error) {
@@ -40,7 +40,7 @@ export const fetchMatches = async () => {
 // ✅ Add a new player (Admin only)
 export const addPlayer = async (playerData) => {
   try {
-    const response = await fetch(`${BASE_URL}/players`, {
+    const response = await fetch(`${BASE_URL}/players/`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(playerData),
@@ -58,7 +58,7 @@ export const addPlayer = async (playerData) => {
 // ✅ Delete a player (Admin only)
 export const deletePlayer = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/players/${id}`, {
+    const response = await fetch(`${BASE_URL}/players/${id}/`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
@@ -75,7 +75,7 @@ export const deletePlayer = async (id) => {
 // ✅ Delete a match (Admin only)
 export const deleteMatch = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/matches/${id}`, {
+    const response = await fetch(`${BASE_URL}/matches/${id}/`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
@@ -96,7 +96,7 @@ export const deleteMatch = async (id) => {
 // ✅ Update a player (Admin only)
 export const updatePlayer = async (id, playerData) => {
   try {
-    const response = await fetch(`${BASE_URL}/players/${id}`, {
+    const response = await fetch(`${BASE_URL}/players/${id}/`, {
       method: "PATCH",
       headers: getAuthHeaders(),
       body: JSON.stringify(playerData),
@@ -114,7 +114,7 @@ export const updatePlayer = async (id, playerData) => {
 // ✅ Update a match (Admin only)
 export const updateMatch = async (id, matchData) => {
   try {
-    const response = await fetch(`${BASE_URL}/matches/${id}`, {
+    const response = await fetch(`${BASE_URL}/matches/${id}/`, {
       method: "PATCH",
       headers: getAuthHeaders(),
       body: JSON.stringify(matchData),
@@ -130,14 +130,14 @@ export const updateMatch = async (id, matchData) => {
 };
 
 export async function getTournaments() {
-  const res = await fetch(`${BASE_URL}/tournaments`);
+  const res = await fetch(`${BASE_URL}/tournaments/`);
   return res.json();
 }
 
 export const createTournament = async (tournamentData) => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${BASE_URL}/tournaments`, {
+  const response = await fetch(`${BASE_URL}/tournaments/`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(tournamentData),
@@ -155,7 +155,7 @@ export const createTournament = async (tournamentData) => {
 // ✅ Login user and store token
 export const loginUser = async (credentials) => {
   try {
-    const response = await fetch(`${BASE_URL}/token`, {
+    const response = await fetch(`${BASE_URL}/token/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
@@ -179,14 +179,14 @@ export const logoutUser = () => {
 
 // ✅ Fetch tournament details
 export async function getTournamentDetails(id) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/details`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/details/`);
   if (!res.ok) throw new Error("Failed to fetch tournament details");
   return await res.json();
 }
 
 // ✅ Submit a match result
 export async function submitMatchResult(matchId, result) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result/`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(result),
@@ -202,7 +202,7 @@ export async function submitMatchResult(matchId, result) {
 
 export const resetTournament = async (tournamentId) => {
   try {
-    const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/reset`, {
+    const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/reset/`, {
       method: "POST",
       headers: getAuthHeaders(),
     });
@@ -218,7 +218,7 @@ export const resetTournament = async (tournamentId) => {
 // ✅ Create a customized tournament (Admin only)
 export const createCustomTournament = async (customTournamentData) => {
   try {
-    const response = await fetch(`${BASE_URL}/tournaments/custom`, {
+    const response = await fetch(`${BASE_URL}/tournaments/custom/`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(customTournamentData),
