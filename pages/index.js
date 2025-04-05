@@ -1,23 +1,29 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import CustomNavbar from "../components/Navbar";
+import { fetchPlayers } from "../utils/api";
 
 const Home = () => {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then((response) => response.json())
-      .then((data) => {
+    const loadPlayers = async () => {
+      try {
+        const data = await fetchPlayers();
         if (Array.isArray(data)) {
-          const sortedPlayers = data.sort((a, b) => b.rating - a.rating);
-          setPlayers(sortedPlayers);
+          const sorted = data.sort((a, b) => b.rating - a.rating);
+          setPlayers(sorted);
         } else {
           console.error("Expected array but got:", data);
         }
-      })
-      .catch((error) => console.error("Error fetching players:", error));
+      } catch (err) {
+        console.error("Error loading players:", err);
+      }
+    };
+  
+    loadPlayers();
   }, []);
+  
 
   const getRowClass = (index) => {
     switch (index) {
