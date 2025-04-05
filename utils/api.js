@@ -244,7 +244,7 @@ export const resetTournament = async (tournamentId) => {
 // ✅ Create a customized tournament (Admin only)
 export const createCustomTournament = async (customTournamentData) => {
   try {
-    const response = await fetch(`${BASE_URL}/tournaments/custom/`, {
+    const response = await fetch(`${BASE_URL}/tournaments/custom`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(customTournamentData),
