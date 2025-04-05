@@ -30,7 +30,7 @@ export default function TournamentDetailsPage() {
     if (!id) return;
 
     const loadData = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players/`);
       const data = await res.json();
       const map = {};
       data.forEach((p) => (map[p.id] = p.name));
