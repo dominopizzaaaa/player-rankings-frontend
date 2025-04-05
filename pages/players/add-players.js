@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CustomNavbar from "../../components/Navbar";
 import { useRouter } from "next/router";
+import { addPlayer } from "../../utils/api";
 
 const AddPlayers = () => {
   const [name, setName] = useState("");
@@ -21,8 +22,6 @@ const AddPlayers = () => {
 
   const handleAddPlayer = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-    if (!token) return alert("Unauthorized");
 
     const newPlayer = {
       name,
@@ -35,20 +34,24 @@ const AddPlayers = () => {
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newPlayer),
-      });
-      if (!res.ok) throw new Error();
+      await addPlayer(newPlayer);
       alert("✅ Player added!");
-      setName(""); setHandedness(""); setForehandRubber(""); setBackhandRubber(""); setBlade(""); setAge(""); setGender("");
+
+      // Reset form
+      setName("");
+      setHandedness("");
+      setForehandRubber("");
+      setBackhandRubber("");
+      setBlade("");
+      setAge("");
+      setGender("");
     } catch (err) {
       console.error(err);
-      alert("Failed to add player.");
+      if (err.message.includes("Unauthorized")) {
+        alert("You must be logged in to add a player.");
+      } else {
+        alert("Failed to add player. Please try again.");
+      }
     }
   };
 

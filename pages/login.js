@@ -1,35 +1,26 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { loginUser } from "../utils/api";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        username,
-        password,
-      }),
-    });
-
-    const data = await response.json();
-    setLoading(false);
-
-    if (response.ok) {
-      localStorage.setItem("token", data.access_token);
+  
+    try {
+      await loginUser(username, password);
       router.push("/");
-    } else {
+    } catch (error) {
       alert("Invalid login");
+    } finally {
+      setLoading(false);
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center px-4">
