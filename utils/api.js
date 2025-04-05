@@ -42,7 +42,7 @@ export const addPlayer = async (playerData) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Unauthorized");
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export const addMatch = async (matchData) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Unauthorized");
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
