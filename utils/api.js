@@ -16,7 +16,7 @@ const getAuthHeaders = () => {
 // ✅ Fetch all players
 export const fetchPlayers = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/players/`);
+    const response = await fetch(`${BASE_URL}/players`);
     if (!response.ok) throw new Error(`Failed to fetch players: ${response.statusText}`);
     return await response.json();
   } catch (error) {
@@ -28,7 +28,7 @@ export const fetchPlayers = async () => {
 // ✅ Fetch all matches
 export const fetchMatches = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/matches/`);
+    const response = await fetch(`${BASE_URL}/matches`);
     if (!response.ok) throw new Error(`Failed to fetch matches: ${response.statusText}`);
     return await response.json();
   } catch (error) {
@@ -42,7 +42,7 @@ export const addPlayer = async (playerData) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Unauthorized");
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players/`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export const addPlayer = async (playerData) => {
 // ✅ Delete a player (Admin only)
 export const deletePlayer = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/players/${id}/`, {
+    const response = await fetch(`${BASE_URL}/players/${id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
@@ -79,20 +79,20 @@ export const deletePlayer = async (id) => {
 // ✅ Delete a match (Admin only)
 export const deleteMatch = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/matches/${id}/`, {
+    const response = await fetch(`${BASE_URL}/matches/${id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
 
     if (!response.ok) throw new Error(`Failed to delete match: ${response.statusText}`);
 
-    alert("Match deleted successfully!"); // ✅ Success message
-    window.location.reload(); // ✅ Refresh the page after deletion
+    alert("Match deleted successfully!");
+    window.location.reload();
 
     return await response.json();
   } catch (error) {
     console.error("Error deleting match:", error);
-    alert("Failed to delete match. Please try again."); // ✅ Error message
+    alert("Failed to delete match. Please try again.");
     return null;
   }
 };
@@ -101,7 +101,7 @@ export const addMatch = async (matchData) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Unauthorized");
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches/`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export const addMatch = async (matchData) => {
 // ✅ Update a player (Admin only)
 export const updatePlayer = async (id, playerData) => {
   try {
-    const response = await fetch(`${BASE_URL}/players/${id}/`, {
+    const response = await fetch(`${BASE_URL}/players/${id}`, {
       method: "PATCH",
       headers: getAuthHeaders(),
       body: JSON.stringify(playerData),
@@ -139,7 +139,7 @@ export const updatePlayer = async (id, playerData) => {
 // ✅ Update a match (Admin only)
 export const updateMatch = async (id, matchData) => {
   try {
-    const response = await fetch(`${BASE_URL}/matches/${id}/`, {
+    const response = await fetch(`${BASE_URL}/matches/${id}`, {
       method: "PATCH",
       headers: getAuthHeaders(),
       body: JSON.stringify(matchData),
@@ -155,14 +155,14 @@ export const updateMatch = async (id, matchData) => {
 };
 
 export async function getTournaments() {
-  const res = await fetch(`${BASE_URL}/tournaments/`);
+  const res = await fetch(`${BASE_URL}/tournaments`);
   return res.json();
 }
 
 export const createTournament = async (tournamentData) => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${BASE_URL}/tournaments/`, {
+  const response = await fetch(`${BASE_URL}/tournaments`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(tournamentData),
@@ -228,7 +228,7 @@ export async function submitMatchResult(matchId, result) {
 
 export const resetTournament = async (tournamentId) => {
   try {
-    const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/reset/`, {
+    const response = await fetch(`${BASE_URL}/tournaments/${tournamentId}/reset`, {
       method: "POST",
       headers: getAuthHeaders(),
     });
@@ -267,7 +267,7 @@ export const createCustomTournament = async (customTournamentData) => {
 export const deleteTournament = async (id) => {
   const token = localStorage.getItem("token");
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
