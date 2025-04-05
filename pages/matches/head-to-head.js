@@ -35,19 +35,6 @@ export default function HeadToHeadPage() {
     }
   };  
 
-  const fetchHeadToHead = async () => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches/head-to-head`, {
-        params: { player1_id: player1, player2_id: player2 },
-      });
-      setData(res.data);
-      setError("");
-    } catch (err) {
-      setError("No match history found between these two players.");
-      setData(null);
-    }
-  };
-
   return (
     <>
       <Navbar />
