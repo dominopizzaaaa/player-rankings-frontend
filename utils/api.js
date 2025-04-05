@@ -205,7 +205,7 @@ export const logoutUser = () => {
 
 // ✅ Fetch tournament details
 export async function getTournamentDetails(id) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/details/`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/details`);
   if (!res.ok) throw new Error("Failed to fetch tournament details");
   return await res.json();
 }
