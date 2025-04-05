@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
+import { fetchPlayers, fetchMatches, addMatch } from "../../utils/api";
 
 const SubmitMatch = () => {
   const [players, setPlayers] = useState([]);
@@ -12,21 +13,29 @@ const SubmitMatch = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`)
-      .then((res) => res.json())
-      .then((data) => setPlayers(data))
-      .catch((err) => console.error("Error fetching players:", err));
+    const loadPlayers = async () => {
+      try {
+        const data = await fetchPlayers();
+        setPlayers(data);
+      } catch (err) {
+        console.error("Error fetching players:", err);
+      }
+    };
+    loadPlayers();
   }, []);
-
+  
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`)
-      .then((res) => res.json())
-      .then((data) => {
+    const loadMatches = async () => {
+      try {
+        const data = await fetchMatches();
         const sorted = [...data].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         setMatches(sorted);
-      })
-      .catch((err) => console.error("Error fetching matches:", err));
-  }, []);
+      } catch (err) {
+        console.error("Error fetching matches:", err);
+      }
+    };
+    loadMatches();
+  }, []);  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -49,26 +58,26 @@ const SubmitMatch = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!player1 || !player2 || !winner || player1 === player2) {
       alert("Please select valid players and ensure Player 1 and Player 2 are different.");
       return;
     }
-
+  
     const parsedSetScores = setScores.map((s, i) => ({
       set_number: i + 1,
       player1_score: parseInt(s.p1),
       player2_score: parseInt(s.p2),
     }));
-
+  
     const player1_score = parsedSetScores.filter(
       (s) => s.player1_score > s.player2_score
     ).length;
-
+  
     const player2_score = parsedSetScores.filter(
       (s) => s.player2_score > s.player1_score
     ).length;
-
+  
     const matchData = {
       player1_id: parseInt(player1),
       player2_id: parseInt(player2),
@@ -77,41 +86,23 @@ const SubmitMatch = () => {
       player2_score,
       sets: parsedSetScores,
     };
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be logged in to submit a match.");
-      return;
-    }
-
+  
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(matchData),
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          alert("Unauthorized! Please log in.");
-        } else {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return;
-      }
-
+      await addMatch(matchData);
       alert("Match submitted successfully!");
       setPlayer1("");
       setPlayer2("");
       setWinner("");
       setSetScores([{ p1: "", p2: "" }]);
     } catch (err) {
-      console.error("Error submitting match:", err);
+      if (err.message.includes("Unauthorized")) {
+        alert("You must be logged in to submit a match.");
+      } else {
+        console.error("Error submitting match:", err);
+        alert("Something went wrong. Please try again.");
+      }
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen bg-gray-50">

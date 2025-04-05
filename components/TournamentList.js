@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { isAdmin } from "../utils/auth";
+import { fetchPlayers, deleteTournament } from "../utils/api";
 
 const TournamentList = ({ tournaments, onDelete }) => {
   const [admin, setAdmin] = useState(false);
@@ -11,8 +12,7 @@ const TournamentList = ({ tournaments, onDelete }) => {
 
     const fetchPlayerNames = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`);
-        const data = await res.json();
+        const data = await fetchPlayers();
         const map = {};
         data.forEach((p) => (map[p.id] = p.name));
         setPlayerNames(map);
@@ -26,26 +26,14 @@ const TournamentList = ({ tournaments, onDelete }) => {
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this tournament and all its matches?")) return;
-
-    const token = localStorage.getItem("token");
+  
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to delete tournament");
-      }
-
+      await deleteTournament(id);
       if (onDelete) onDelete(id);
     } catch (err) {
-      console.error(err);
       alert("Something went wrong deleting the tournament.");
     }
-  };
+  };  
 
   const extractWinners = (finalStandings) => {
     if (!finalStandings || typeof finalStandings !== "object") return null;

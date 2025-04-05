@@ -39,20 +39,24 @@ export const fetchMatches = async () => {
 
 // ✅ Add a new player (Admin only)
 export const addPlayer = async (playerData) => {
-  try {
-    const response = await fetch(`${BASE_URL}/players/`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(playerData),
-    });
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
 
-    if (!response.ok) throw new Error(`Failed to add player: ${response.statusText}`);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(playerData),
+  });
 
-    return await response.json();
-  } catch (error) {
-    console.error("Error adding player:", error);
-    return null;
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to add player: ${response.status} - ${errorText}`);
   }
+
+  return await response.json();
 };
 
 // ✅ Delete a player (Admin only)
@@ -91,6 +95,27 @@ export const deleteMatch = async (id) => {
     alert("Failed to delete match. Please try again."); // ✅ Error message
     return null;
   }
+};
+
+export const addMatch = async (matchData) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Unauthorized");
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/matches`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(matchData),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to add match: ${response.status} - ${errorText}`);
+  }
+
+  return await response.json();
 };
 
 // ✅ Update a player (Admin only)
@@ -153,22 +178,23 @@ export const createTournament = async (tournamentData) => {
 };
 
 // ✅ Login user and store token
-export const loginUser = async (credentials) => {
+export const loginUser = async (username, password) => {
   try {
-    const response = await fetch(`${BASE_URL}/token/`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/token/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ username, password }),
     });
 
-    if (!response.ok) throw new Error(`Login failed: ${response.statusText}`);
-
     const data = await response.json();
+
+    if (!response.ok) throw new Error("Invalid login");
+
     localStorage.setItem("token", data.access_token);
     return data;
   } catch (error) {
-    console.error("Error logging in:", error);
-    return null;
+    console.error("Login error:", error);
+    throw error;
   }
 };
 
@@ -234,5 +260,24 @@ export const createCustomTournament = async (customTournamentData) => {
   } catch (error) {
     console.error("Error creating custom tournament:", error);
     throw error;
+  }
+};
+
+// ✅ Delete a tournament (Admin only)
+export const deleteTournament = async (id) => {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/${id}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error(`Failed to delete tournament: ${res.statusText}`);
+    return true;
+  } catch (err) {
+    console.error("Error deleting tournament:", err);
+    throw err;
   }
 };
