@@ -281,3 +281,18 @@ export const deleteTournament = async (id) => {
     throw err;
   }
 };
+
+// ✅ Fetch head-to-head match history between two players
+export const fetchHeadToHead = async (player1_id, player2_id) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/matches/head-to-head?player1_id=${player1_id}&player2_id=${player2_id}`
+    );
+
+    if (!response.ok) throw new Error("No match history found between these two players.");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching head-to-head data:", error);
+    throw error;
+  }
+};
