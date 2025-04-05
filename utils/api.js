@@ -212,7 +212,7 @@ export async function getTournamentDetails(id) {
 
 // ✅ Submit a match result
 export async function submitMatchResult(matchId, result) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result/`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments/matches/${matchId}/result`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(result),
