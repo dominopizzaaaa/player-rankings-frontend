@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import CustomNavbar from "../../components/Navbar";
 import CreateTournamentForm from "./CreateTournamentForm";
-import CreateCustomTournamentForm from "./CreateCustomTournamentForm"; // 👈 New import
+import CreateCustomTournamentForm from "./CreateCustomTournamentForm";
 import TournamentList from "../../components/TournamentList";
 import { isAdmin } from "../../utils/auth";
+import { getTournaments } from "../../utils/api";
 
 export default function TournamentsPage() {
   const [tournaments, setTournaments] = useState([]);
@@ -17,17 +18,25 @@ export default function TournamentsPage() {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`)
-      .then((res) => res.json())
-      .then((data) => setTournaments(data))
-      .catch((err) => console.error("Failed to load tournaments", err));
-  }, []);
+    const loadTournaments = async () => {
+      try {
+        const data = await getTournaments();
+        setTournaments(data);
+      } catch (err) {
+        console.error("Failed to load tournaments", err);
+      }
+    };
+    loadTournaments();
+  }, []);  
 
-  const refreshTournaments = () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tournaments`)
-      .then((res) => res.json())
-      .then((data) => setTournaments(data));
-  };
+  const refreshTournaments = async () => {
+    try {
+      const data = await getTournaments();
+      setTournaments(data);
+    } catch (err) {
+      console.error("Failed to refresh tournaments", err);
+    }
+  };  
 
   return (
     <div className="min-h-screen bg-gray-100">
