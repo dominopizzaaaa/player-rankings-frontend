@@ -62,17 +62,24 @@ export const addPlayer = async (playerData) => {
 // ✅ Delete a player (Admin only)
 export const deletePlayer = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/players/${id}`, {
+    const res = await fetch(`${BASE_URL}/players/${id}`, {
       method: "DELETE",
-      headers: getAuthHeaders(),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
 
-    if (!response.ok) throw new Error(`Failed to delete player: ${response.statusText}`);
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || "Failed to delete player.");
+    }
 
-    return await response.json();
+    return true;
   } catch (error) {
-    console.error("Error deleting player:", error);
-    return null;
+    console.error("Error deleting player:", error.message);
+    alert(`Failed to delete player: ${error.message}`);
+    return false;
   }
 };
 
