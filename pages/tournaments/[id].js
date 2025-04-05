@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import CustomNavbar from "../../components/Navbar";
 import { isAdmin } from "../../utils/auth";
+import { fetchPlayers } from "../../utils/api";
 import {
   getTournamentDetails,
   submitMatchResult,
@@ -30,8 +31,7 @@ export default function TournamentDetailsPage() {
     if (!id) return;
 
     const loadData = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players/`);
-      const data = await res.json();
+      const data = await fetchPlayers();
       const map = {};
       data.forEach((p) => (map[p.id] = p.name));
       setPlayerNames(map);
