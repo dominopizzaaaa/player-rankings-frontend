@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
+import { fetchPlayers, fetchHeadToHead } from "../../utils/api";
+
 
 export default function HeadToHeadPage() {
   const [players, setPlayers] = useState([]);
@@ -11,16 +13,27 @@ export default function HeadToHeadPage() {
   const playerNames = Object.fromEntries(players.map((p) => [p.id, p.name]));
 
   useEffect(() => {
-    const fetchPlayers = async () => {
+    const loadPlayers = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/players`);
-        setPlayers(res.data);
+        const playerList = await fetchPlayers();
+        setPlayers(playerList);
       } catch (err) {
         setError("Failed to load players");
       }
     };
-    fetchPlayers();
+    loadPlayers();
   }, []);
+  
+  const handleCompare = async () => {
+    try {
+      const result = await fetchHeadToHead(player1, player2);
+      setData(result);
+      setError("");
+    } catch (err) {
+      setError(err.message);
+      setData(null);
+    }
+  };  
 
   const fetchHeadToHead = async () => {
     try {
@@ -70,7 +83,7 @@ export default function HeadToHeadPage() {
           </select>
 
           <button
-            onClick={fetchHeadToHead}
+            onClick={handleCompare}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Compare
