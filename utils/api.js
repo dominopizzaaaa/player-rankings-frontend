@@ -180,7 +180,7 @@ export const createTournament = async (tournamentData) => {
 // ✅ Login user and store token
 export const loginUser = async (username, password) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/token/`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/token`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ username, password }),
