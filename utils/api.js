@@ -62,7 +62,7 @@ export const addPlayer = async (playerData) => {
 // ✅ Delete a player (Admin only)
 export const deletePlayer = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/players/${id}/`, {
+    const response = await fetch(`${BASE_URL}/players/${id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
