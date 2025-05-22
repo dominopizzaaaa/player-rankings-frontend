@@ -4,6 +4,7 @@ import { fetchPlayers, createTournament } from "../../utils/api";
 const CreateTournamentForm = ({ onCreated }) => {
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
+  const [tournamentType, setTournamentType] = useState("group_then_knockout"); // new
   const [numGroups, setNumGroups] = useState(0);
   const [playersPerGroupAdvancing, setPlayersPerGroupAdvancing] = useState(1);
   const [players, setPlayers] = useState([]);
@@ -23,7 +24,7 @@ const CreateTournamentForm = ({ onCreated }) => {
       }
     };
     loadPlayers();
-  }, []);  
+  }, []);
 
   const handleCheckboxChange = (id) => {
     setSelectedPlayers((prev) => ({
@@ -39,30 +40,43 @@ const CreateTournamentForm = ({ onCreated }) => {
       .filter((id) => selectedPlayers[id])
       .map((id) => parseInt(id));
 
+    let num_groups = 0;
+    let players_per_group_advancing = 0;
+
+    if (tournamentType === "group_only") {
+      num_groups = 0;
+      players_per_group_advancing = 0;
+    } else if (tournamentType === "group_then_knockout") {
+      num_groups = parseInt(numGroups);
+      players_per_group_advancing = playersPerGroupAdvancing;
+    } else if (tournamentType === "knockout") {
+      num_groups = 0;
+      players_per_group_advancing = 0;
+    }
+
     const tournamentData = {
       name,
       date,
-      num_groups: parseInt(numGroups),
-      players_per_group_advancing: numGroups > 0 ? playersPerGroupAdvancing : 0,
+      num_groups,
+      players_per_group_advancing,
       player_ids: selectedPlayerIDs,
+      type: tournamentType,
     };
 
     try {
       const data = await createTournament(tournamentData);
       alert("✅ Tournament created successfully!");
-      if (onCreated) onCreated(); // Notify parent
-      
-      // Optionally reset form
+      if (onCreated) onCreated();
+
+      // Reset form
       setName("");
       setDate("");
+      setTournamentType("group_then_knockout");
       setNumGroups(0);
       setPlayersPerGroupAdvancing(1);
       setSelectedPlayers({});
-      
-      // Reload page to reflect new tournament
+
       window.location.reload();
-      
-      if (onCreated) onCreated(); // Notify parent
     } catch (err) {
       console.error("Error creating tournament:", err);
       alert("Failed to create tournament: " + err.message);
@@ -87,7 +101,7 @@ const CreateTournamentForm = ({ onCreated }) => {
             required
           />
         </div>
-  
+
         {/* Date */}
         <div>
           <label className="block font-semibold mb-1" htmlFor="tournament-date">
@@ -102,23 +116,45 @@ const CreateTournamentForm = ({ onCreated }) => {
             required
           />
         </div>
-  
-        {/* Number of Groups */}
+
+        {/* Tournament Type */}
         <div>
-          <label className="block font-semibold mb-1" htmlFor="num-groups">
-            Number of Groups
-          </label>
-          <input
-            id="num-groups"
-            className="w-full p-2 border rounded"
-            type="number"
-            value={numGroups}
-            onChange={(e) => setNumGroups(e.target.value)}
-          />
+          <label className="block font-semibold mb-1">Tournament Type</label>
+          <select
+            value={tournamentType}
+            onChange={(e) => setTournamentType(e.target.value)}
+            className="w-full border rounded px-3 py-2"
+          >
+            <option value="group_then_knockout">Group Stage → Knockout</option>
+            <option value="group_only">Group Stage Only</option>
+            <option value="knockout">Knockout Only</option>
+          </select>
         </div>
 
-        {/* Number of players advancing per group */}
-        {numGroups > 0 && (
+        {/* Number of Groups */}
+        {tournamentType !== "knockout" && (
+          <div>
+            <label className="block font-semibold mb-1" htmlFor="num-groups">
+              Number of Groups {tournamentType === "group_only" && "(fixed to 1)"}
+            </label>
+            <input
+              id="num-groups"
+              className="w-full p-2 border rounded"
+              type="number"
+              value={tournamentType === "group_only" ? 1 : numGroups}
+              onChange={(e) =>
+                tournamentType !== "group_only"
+                  ? setNumGroups(parseInt(e.target.value))
+                  : null
+              }
+              disabled={tournamentType === "group_only"}
+              required
+            />
+          </div>
+        )}
+
+        {/* Number of Players Advancing */}
+        {tournamentType === "group_then_knockout" && (
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               Number of players advancing per group
@@ -132,7 +168,6 @@ const CreateTournamentForm = ({ onCreated }) => {
           </div>
         )}
 
-  
         {/* Player Selection */}
         <div>
           <label className="block font-semibold mb-1">Select Players:</label>
@@ -149,7 +184,7 @@ const CreateTournamentForm = ({ onCreated }) => {
             ))}
           </div>
         </div>
-  
+
         {/* Submit Button */}
         <button
           type="submit"
@@ -160,7 +195,6 @@ const CreateTournamentForm = ({ onCreated }) => {
       </form>
     </div>
   );
-  
 };
 
 export default CreateTournamentForm;
